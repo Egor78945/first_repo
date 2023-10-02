@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to the bank</title>
+</head>
+<body>
+<div sec:authorize="isAnonymous()">
+<h1>Menu:</h1><br>
+<a href="/reg">Registration</a><br>
+<a href="/login">Log-in</a>
+</div>
+<div sec:authorize="isAuthenticated()">
+<h1 th:text="'Hello, ' + ${user.getName()}"></h1>
+    <br>
+    <table>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Balance</th>
+            <th>Role</th>
+            <th>Date of Registration</th>
+        </tr>
+        <td th:text="${user.getId()}"></td>
+        <td th:text="${user.getName()}"></td>
+        <td th:text="${user.getEmail()}"></td>
+        <td th:text="${user.getBalance()}"></td>
+        <td th:text="${user.getRole()}"></td>
+        <td th:text="${user.getDateOfRegistration()}"></td>
+    </table>
+    <br>
+    <form th:action="@{/pay}" method="get">
+        <input type="submit" value="Pay money">
+    </form><br>
+    <form th:action="@{/take}" method="get">
+        <input type="submit" value="Take money">
+    </form>
+</div>
+</body>
+</html>
