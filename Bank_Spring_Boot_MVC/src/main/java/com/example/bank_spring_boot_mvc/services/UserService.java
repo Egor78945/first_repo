@@ -57,4 +57,12 @@ public class UserService implements UserDetailsService {
             userRepository.save(user);
         }
     }
+    public void transferMoney(User from,User to, Transaction transaction) throws BadCredentialsException{
+        if(transaction.getSum() > from.getBalance()){
+            throw new BadCredentialsException("You dont have any money");
+        } else {
+            payMoney(transaction, to);
+            takeMoney(transaction, from);
+        }
+    }
 }

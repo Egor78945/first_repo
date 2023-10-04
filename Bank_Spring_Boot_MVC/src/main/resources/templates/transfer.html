@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Transfer money to</title>
+</head>
+<body>
+<h1>Transfer menu</h1>
+<br>
+<form th:action="@{/transfer}" th:object="${transaction}" method="post">
+    Email: <input th:field="*{email}" type="text" name="email" id="email">
+    Sum: <input th:field="*{sum}" type="number" name="sum" id="sum">
+    <input type="submit" value="Transfer">
+</form>
+</body>
+</html>

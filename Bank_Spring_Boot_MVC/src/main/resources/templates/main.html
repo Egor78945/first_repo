@@ -6,12 +6,12 @@
 </head>
 <body>
 <div sec:authorize="isAnonymous()">
-<h1>Menu:</h1><br>
-<a href="/reg">Registration</a><br>
-<a href="/login">Log-in</a>
+    <h1>Menu:</h1><br>
+    <a href="/reg">Registration</a><br>
+    <a href="/login">Log-in</a>
 </div>
 <div sec:authorize="isAuthenticated()">
-<h1 th:text="'Hello, ' + ${user.getName()}"></h1>
+    <h1 th:text="'Hello, ' + ${user.getName()}"></h1>
     <br>
     <table>
         <tr>
@@ -32,9 +32,18 @@
     <br>
     <form th:action="@{/pay}" method="get">
         <input type="submit" value="Pay money">
-    </form><br>
+    </form>
+    <br>
     <form th:action="@{/take}" method="get">
         <input type="submit" value="Take money">
+    </form>
+    <br>
+    <form th:action="@{/transfer}" method="get">
+        <input type="submit" value="Transfer">
+    </form>
+    <br>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Log-out">
     </form>
 </div>
 </body>

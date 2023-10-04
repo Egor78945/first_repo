@@ -46,4 +46,16 @@ public class MainController {
         userService.takeMoney(transaction, user);
         return "redirect:/main";
     }
+    @GetMapping("/transfer")
+    public String transfer(Model model){
+        model.addAttribute("transaction", new Transaction());
+        return "transfer";
+    }
+    @PostMapping("/transfer")
+    public String transfer(Principal principal, @ModelAttribute("transaction") Transaction transaction){
+        User userFrom = userService.getUserByEmail(principal.getName());
+        User userTo = userService.getUserByEmail(transaction.getEmail());
+        userService.transferMoney(userFrom, userTo, transaction);
+        return "redirect:/main";
+    }
 }
