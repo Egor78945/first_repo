@@ -65,4 +65,11 @@ public class UserService implements UserDetailsService {
             takeMoney(transaction, from);
         }
     }
+    public User getUserById(Long id){
+        return userRepository.findById(id).get();
+    }
+    public void deleteUser(User user){
+        userRepository.delete(user);
+    }
+
 }

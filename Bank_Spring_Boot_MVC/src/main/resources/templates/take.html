@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Take money menu</h1><br>
-<form th:action="@{/take}" method="post" th:object="${transaction}">
+<form th:action="@{/user/take}" method="post" th:object="${transaction}">
     Take sum: <input th:field="*{sum}" type="number" name="sum" id="sum">
     <input type="submit" value="Take">
 </form>

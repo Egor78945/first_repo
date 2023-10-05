@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+</head>
+<body>
+<h1>Admin panel</h1><br>
+<div th:switch="${user.role}">
+    <p th:case="'USER_ROLE'">
+    <form th:action="@{/admin/admin_panel}" th:object="${find}" method="get">
+        Enter an email to find user:<input type="text" th:field="*{email}">
+        <input type="submit" value="Find">
+    </form>
+    </p>
+</div>
+</body>
+</html>

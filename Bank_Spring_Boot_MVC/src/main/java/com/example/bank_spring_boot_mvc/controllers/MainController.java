@@ -16,6 +16,7 @@ import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/user")
 public class MainController {
     private final UserService userService;
     @GetMapping("/main")
@@ -33,7 +34,7 @@ public class MainController {
     public String payMoney(Principal principal, @ModelAttribute("transaction") Transaction transaction){
         User user = userService.getUserByEmail(principal.getName());
         userService.payMoney(transaction, user);
-        return "redirect:/main";
+        return "redirect:/user/main";
     }
     @GetMapping("/take")
     public String takeMoney(Model model){
@@ -44,7 +45,7 @@ public class MainController {
     public String takeMoney(Principal principal, @ModelAttribute("transaction") Transaction transaction){
         User user = userService.getUserByEmail(principal.getName());
         userService.takeMoney(transaction, user);
-        return "redirect:/main";
+        return "redirect:/user/main";
     }
     @GetMapping("/transfer")
     public String transfer(Model model){
@@ -56,6 +57,6 @@ public class MainController {
         User userFrom = userService.getUserByEmail(principal.getName());
         User userTo = userService.getUserByEmail(transaction.getEmail());
         userService.transferMoney(userFrom, userTo, transaction);
-        return "redirect:/main";
+        return "redirect:/user/main";
     }
 }

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org">
 <body>
 <header>Registration</header>
-<form th:action="@{/reg}" method="post" th:object="${user}">
+<form th:action="@{/auth/reg}" method="post" th:object="${user}">
     <input th:field="*{name}" type="text" name="name" id="name">
     <input th:field="*{email}" type="text" name="email" id="email">
     <input th:field="*{password}" type="password" name="password" id="password">

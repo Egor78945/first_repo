@@ -13,11 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Date;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/auth")
 public class AuthController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -43,10 +45,10 @@ public class AuthController {
             regUser.setEmail(user.getEmail());
             regUser.setPassword(passwordEncoder.encode(user.getPassword()));
             regUser.setDateOfRegistration(new Date(System.currentTimeMillis()).toString());
-            regUser.setRole(Role.USER_ROLE);
+            regUser.setRole(Role.ADMIN_ROLE);
             regUser.setBalance(0L);
             userService.saveUser(regUser);
-            return "redirect:/main";
+            return "redirect:/user/main";
         }
 
     }

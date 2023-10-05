@@ -38,10 +38,12 @@ public class MySecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/register").permitAll()
-                        .requestMatchers("/reg").permitAll()
+                        .requestMatchers("/auth/register").permitAll()
+                        .requestMatchers("/auth/reg").permitAll()
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN_ROLE")
+                        .requestMatchers("/admin/**").fullyAuthenticated()
                         .anyRequest().fullyAuthenticated())
-                .formLogin((form) -> form.loginPage("/login").permitAll())
+                .formLogin((form) -> form.loginPage("/auth/login").permitAll())
                 .logout((l) -> l.permitAll());
         return http.build();
     }
