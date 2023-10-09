@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update user's role</title>
+</head>
+<body>
+<h1>Update menu</h1>
+<form th:action="@{/admin/grant}" method="post" th:object="${user}">
+    Email: <input th:field="*{email}" id="email" name="email">
+    <input type="submit" value="">
+</form>
+
+</body>
+</html>

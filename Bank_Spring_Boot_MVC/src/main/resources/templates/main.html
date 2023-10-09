@@ -45,9 +45,19 @@
     <form th:action="@{/logout}" method="post">
         <input type="submit" value="Log-out">
     </form>
+    <br>
     <form th:action="@{/admin/find}" method="get">
         <input type="submit" value="Admin menu">
     </form>
+    <br>
+    <form th:action="@{/user/update}" method="get">
+        <input type="submit" value="Update">
+    </form>
+    <br>
+    <form th:action="@{/admin/grant}" method="get">
+        <input type="submit" value="Grant">
+    </form>
+
 </div>
 </body>
 </html>

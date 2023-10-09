@@ -1,6 +1,7 @@
 package com.example.bank_spring_boot_mvc.controllers;
 
 import com.example.bank_spring_boot_mvc.entities.Role;
+import com.example.bank_spring_boot_mvc.entities.UpdateRoleModel;
 import com.example.bank_spring_boot_mvc.entities.User;
 import com.example.bank_spring_boot_mvc.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -42,4 +43,19 @@ public class AdminController {
         }
         return "redirect:/user/main";
     }
+
+    @GetMapping("/grant")
+    public String grant(Model model) {
+        model.addAttribute("user", new UpdateRoleModel());
+        return "update_role";
+    }
+
+    @PostMapping("/grant")
+    public String grant(@ModelAttribute("user") UpdateRoleModel model) {
+        User user = userService.getUserByEmail(model.getEmail());
+        user.setRole(Role.ADMIN_ROLE);
+        userService.updateUser(user);
+     return "redirect:/user/main";
+    }
 }
+
