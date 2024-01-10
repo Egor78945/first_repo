@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+</head>
+<body>
+<h1>Search community</h1>
+<br>
+<div sec:authorize="hasAuthority('USER_ROLE')">
+    <form th:action="@{main/community/search}" method="post" th:object="${comSModel}">
+        Name:<input type="text" th:field="*{name}"><br>
+        <input type="submit" value="Search">
+    </form>
+</div>
+<div sec:authorize="hasAuthority('ADMIN_ROLE')">
+    <form th:action="@{admin/community/search}" method="post" th:object="${comSModel}">
+        Name:<input type="text" th:field="*{name}"><br>
+        <input type="submit" value="Search">
+    </form>
+</div>
+</body>
+</html>

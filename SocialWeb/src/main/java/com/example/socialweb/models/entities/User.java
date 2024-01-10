@@ -3,6 +3,7 @@ package com.example.socialweb.models.entities;
 
 import com.example.socialweb.models.enums.Role;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -29,7 +30,7 @@ public class User {
     private String status;
     @Column(name = "email")
     private String email;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Community> communities;
     @Column(name = "age")
     private Integer age;

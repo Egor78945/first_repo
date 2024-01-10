@@ -20,18 +20,23 @@
     <input type="submit" value="Report">
 </form>
 <br>
-<div th:if="${!user.communities.contains(comm)}">
-    <form th:action="@{/main/community/subscribe/{id}(id=${comm.getId()})}" method="post">
-        <input type="submit" value="Subscribe">
-    </form>
-    <br>
-</div>
-<div th:if="${user.communities.contains(comm)}">
+<div th:if="${user.getCommunities().contains(comm)}">
     <form th:action="@{/main/community/unsubscribe/{id}(id=${comm.getId()})}" method="post">
         <input type="submit" value="Unsubscribe">
     </form>
     <br>
 </div>
+<div th:if="${!user.getCommunities().contains(comm)}">
+    <form th:action="@{/main/community/subscribe/{id}(id=${comm.getId()})}" method="post">
+        <input type="submit" value="Subscribe">
+    </form>
+    <br>
+</div>
+
+<form th:action="@{/main/community/delete/{id}(id=${comm.getId()})}" method="post">
+    <input type="submit" value="Delete">
+</form>
+<br>
 <table>
     <thead>
     <tr>

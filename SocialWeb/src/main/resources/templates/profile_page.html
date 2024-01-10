@@ -36,9 +36,20 @@
     </form>
     <br>
     <form th:action="@{/main/search}" method="get">
-        <input type="submit" value="Search">
+        <input type="submit" value="Search user">
     </form>
     <br>
+    <div sec:authorize="hasAuthority('USER_ROLE')">
+        <form th:action="@{/main/community/search}" method="get">
+            <input type="submit" value="Search community">
+        </form>
+        <br>
+    </div>
+    <div sec:authorize="hasAuthority('ADMIN_ROLE')">
+        <form th:action="@{/admin/community/search}" method="get">
+            <input type="submit" value="Search community">
+        </form>
+    </div>
     <form th:action="@{/main/message}" method="get">
         <input type="submit" value="Messages">
     </form>

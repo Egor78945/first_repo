@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Result</title>
+</head>
+<body>
+<h1>Result</h1><br>
+<b th:text="${community.getName()}"/><br>
+<b th:text="${community.getSubscribers().size()}"/><br>
+<form th:action="@{/main/community/{id}(id=${community.getId()})}" method="get">
+    Enter:<input type="submit">
+</form>
+</body>
+</html>

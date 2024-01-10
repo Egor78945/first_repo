@@ -252,6 +252,27 @@ public class MainController {
         return "redirect:/main/profile";
     }
 
+    @GetMapping("/community/search")
+    public String searchCommunity(Model model){
+        model.addAttribute("comSModel", new CommunitySearchModel());
+        return "communitySearch_page";
+    }
+    @PostMapping("/community/search")
+    public String searchCommunity(@ModelAttribute("comSModel") CommunitySearchModel Rmodel, Model model){
+        try {
+            Community foundCommunity = communityService.findCommunityForUser(Rmodel);
+            model.addAttribute("community", foundCommunity);
+            return "searchCommunityResult_page";
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return "redirect:/main/profile";
+        }
+    }
+    @PostMapping("/community/delete/{id}")
+    public String deleteCommunity(@PathVariable("id") Long id){
+        communityService.delete(id);
+        return "redirect:/main/profile";
+    }
     @GetMapping("/community")
     public String getUserCommunities(Model model) {
         model.addAttribute("comms", communityService.getAllCommunitiesByOwner(user));

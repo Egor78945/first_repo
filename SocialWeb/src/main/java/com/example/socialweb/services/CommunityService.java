@@ -5,6 +5,7 @@ import com.example.socialweb.models.entities.Report;
 import com.example.socialweb.models.entities.User;
 import com.example.socialweb.models.enums.CommunityMode;
 import com.example.socialweb.models.requestModels.CommunityModel;
+import com.example.socialweb.models.requestModels.CommunitySearchModel;
 import com.example.socialweb.models.requestModels.Message;
 import com.example.socialweb.models.requestModels.ReportModel;
 import com.example.socialweb.repositories.CommunityRepository;
@@ -138,5 +139,33 @@ public class CommunityService {
             userRepository.save(user);
             log.info("community: user with id " + user.getId() + " has been added to community with id " + community.getId());
         }
+    }
+    public Community getCommunityByName(String name){
+        return communityRepository.findCommunityByName(name);
+    }
+
+    public Community findCommunityForUser(CommunitySearchModel model) throws Exception {
+        Community community = getCommunityByName(model.getName());
+        if(community.getMode() == CommunityMode.PRIVATE_MODE || community == null){
+            throw new Exception("community: community with name "+ model.getName() +" not found.");
+        } else {
+            log.info("community: community with name " + model.getName() + " is found.");
+            return community;
+        }
+    }
+    public Community findCommunityForAdmin(CommunitySearchModel model) throws Exception {
+        Community community = getCommunityByName(model.getName());
+        if(community == null){
+            throw new Exception("community: community with name "+ model.getName() +" not found.");
+        } else {
+            log.info("community: community with name " + model.getName() + " is found.");
+            return community;
+        }
+    }
+
+    public void delete(Long id) {
+        log.info("community: attempt to delete community with id " + id + ".");
+        communityRepository.deleteById(id);
+        log.info("community: community with id " + id + " has been deleted.");
     }
 }
