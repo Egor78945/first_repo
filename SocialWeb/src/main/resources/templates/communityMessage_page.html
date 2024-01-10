@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message</title>
+</head>
+<body>
+<h1>Message</h1><br>
+<form th:action="@{/main/community/message}" method="post" th:object="${message}">
+    <input type="text" th:field="*{getMessage()}"><br>
+    <input type="submit" value="Send">
+</form>
+</body>
+</html>

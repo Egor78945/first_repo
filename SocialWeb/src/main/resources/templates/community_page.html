@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Community</title>
+</head>
+<body>
+<h1 th:text="${comm.getName()}"/><br>
+<b th:text="${comm.getDescription()}"/><br>
+<b th:text="'Owner: ' + ${comm.getOwner().getName()} + ' ' + ${comm.getOwner().getSurname()}"/><br>
+<b th:text="'Subs count: ' + ' ' + ${comm.getSubscribers().size()}"/><br>
+<b th:text="'News: '"/><br>
+<div th:if="${comm.getOwner().getId() != user.getId()}">
+    <form th:action="@{/main/community/message}" method="get">
+        <input type="submit" value="Message">
+    </form>
+    <br>
+</div>
+<form th:action="@{/main/report/community}" method="get">
+    <input type="submit" value="Report">
+</form>
+<br>
+<div th:if="${!user.communities.contains(comm)}">
+    <form th:action="@{/main/community/subscribe/{id}(id=${comm.getId()})}" method="post">
+        <input type="submit" value="Subscribe">
+    </form>
+    <br>
+</div>
+<div th:if="${user.communities.contains(comm)}">
+    <form th:action="@{/main/community/unsubscribe/{id}(id=${comm.getId()})}" method="post">
+        <input type="submit" value="Unsubscribe">
+    </form>
+    <br>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>Theme</th>
+        <th>Description</th>
+        <th>Likes</th>
+        <th>Comments count</th>
+        <th>Comments</th>
+        <th>Like</th>
+        <th>Comment</th>
+        <th>Report</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${comm.getNews().isEmpty()}">
+        <td colspan="2">You have not any news</td>
+    </tr>
+    <tr th:each="n : ${comm.getNews()}">
+        <td><span th:text="${n.theme}">Theme</span></td>
+        <td><span th:text="${n.description}">Description</span></td>
+        <td><span th:text="${n.like.size()}">Likes</span></td>
+        <td><span th:text="${n.comments.size()}">Comments</span></td>
+        <td>
+            <form th:action="@{/main/comments/{id}(id=${n.id})}" method="get">
+                <input type="submit" value="Look comments">
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/main/like/{id}(id=${n.id})}" method="post">
+                <input type="submit" value="Like">
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/main/comment/{id}(id=${n.id})}" method="get">
+                <input type="submit" value="Comment">
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/main/report/news/{id}(id=${n.id})}" method="get">
+                <input type="submit" value="Report">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

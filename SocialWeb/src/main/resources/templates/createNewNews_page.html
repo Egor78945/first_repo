@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create News</title>
+</head>
+<body>
+<h1>Create news</h1><br>
+<form th:action="@{/main/create}" th:object="${news}" method="post">
+    Theme of your news:<input type="text" th:field="*{theme}"/><br>
+    Description about your news:<input type="text" th:field="*{description}"><br>
+    <input type="submit"/>
+</form>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create community</title>
+</head>
+<body>
+<h1>Create community</h1>
+<form th:action="@{/main/community/create}" method="post" th:object="${comm}">
+    Name:<input type="text" th:field="*{name}"><br>
+    Description:<input type="text" th:field="*{description}"><br>
+    Private mode:<input type="radio" th:field="*{mode}" value="PRIVATE_MODE"><br>
+    Public mode:<input type="radio" th:field="*{mode}" value="PUBLIC_MODE"><br>
+    <input type="submit" value="Create">
+</form>
+</body>
+</html>

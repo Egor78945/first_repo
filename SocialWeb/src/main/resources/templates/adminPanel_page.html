@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+</head>
+<body>
+<h1>Admin panel</h1>
+All reports: <b th:text="${allReports.size()}"/>
+<br>
+Reports news: <b th:text="${newsReports.size()}"/>
+<form th:action="@{/admin/reports/news}" method="get">
+    <input type="submit" value="Look">
+</form>
+<br>
+All banned users: <b th:text="${allBanned.size()}"/>
+<br>
+<form th:action="@{/admin/banned}" method="get">
+    <input type="submit" value="Look">
+</form>
+<br>
+Reports users: <b th:text="${allReportsUsers.size()}"/>
+<form th:action="@{/admin/reports/users}" method="get">
+    <input type="submit" value="Look">
+</form>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>User profile</title>
+</head>
+<body>
+<h1 th:text="${user.getName() + ' ' + user.getSurname()}"/><br>
+<div th:if="${user.friendList.contains(princ)} or ${!user.closeProfile}">
+    <div sec:authorize="hasAuthority('ADMIN_ROLE')">
+        <div th:if="${user.isBan}">
+            <h1>Banned</h1>
+        </div>
+    </div>
+    Status: <b th:text="${user.status}"/><br>
+    Friends count: <b th:text="${user.friendList.size()}"/><br>
+    Age: <b th:text="${user.age}"/><br>
+    City: <b th:text="${user.city}"/><br>
+    Country: <b th:text="${user.country}"/><br>
+    <form th:action="@{/main/send/{id}(id=${user.id})}" method="get">
+        <input type="submit" value="Send message">
+    </form>
+    <br>
+    <div sec:authorize="hasAuthority('ADMIN_ROLE')">
+        <div th:if="${user.getRole() != 'ADMIN_ROLE'}">
+            <form th:action="@{/admin/ban/{id}(id=${user.getId()})}" method="get">
+                <input type="submit" value="Ban">
+            </form>
+        </div>
+        <br>
+        <div th:if="${user.isBan}">
+            <form th:action="@{/admin/unban/{id}(id=${user.getId()})}" method="post">
+                <input type="submit" value="Unban">
+            </form>
+        </div>
+        <br>
+    </div>
+    <div th:if="${!myComms.isEmpty()}">
+        <form th:action="@{/main/community/invite/{id}(id=${user.getId()})}" method="get">
+            <input type="submit" value="Invite">
+        </form>
+        <br>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>Theme</th>
+            <th>Description</th>
+            <th>Likes</th>
+            <th>Like</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${news.empty}">
+            <td colspan="2">User have not any news</td>
+        </tr>
+        <tr th:each="n : ${news}">
+            <td><span th:text="${n.theme}">Theme</span></td>
+            <td><span th:text="${n.description}">Description</span></td>
+            <td><span th:text="${n.like.size()}">Likes</span></td>
+            <td>
+                <form th:action="@{/main/like/{id}(id=${n.id})}" method="post">
+                    <input type="submit" value="Like">
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

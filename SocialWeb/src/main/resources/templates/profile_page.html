@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>profile</title>
+</head>
+<body>
+<div th:if="${user.isBan}">
+    <h1 th:text="'Your account is banned.'"/><br>
+    <h1 th:text="${user.getBanHistory().values().toArray()[user.getBanHistory().size()-1]}"/>
+</div>
+<div th:if="${!user.isBan}">
+    <h1 th:text="${user.getName() + ' ' + user.getSurname()}"/><br>
+    Status: <b th:text="${user.status}"/><br>
+    Friends count: <b th:text="${user.friendList.size()}"/><br>
+    Age: <b th:text="${user.age}"/><br>
+    City: <b th:text="${user.city}"/><br>
+    Country: <b th:text="${user.country}"/><br>
+    <div sec:authorize="hasAuthority('ADMIN_ROLE')">
+        <form th:action="@{/admin/panel}" method="get">
+            <input type="submit" value="Admin panel">
+        </form>
+    </div>
+    <br>
+    <form th:action="@{/main/update}" method="get">
+        <input type="submit" value="Update">
+    </form>
+    <br>
+    <form th:action="@{/main/friends}" method="get">
+        <input type="submit" value="Friends">
+    </form>
+    <br>
+    <form th:action="@{/main/changePassword}" method="get">
+        <input type="submit" value="Change password">
+    </form>
+    <br>
+    <form th:action="@{/main/search}" method="get">
+        <input type="submit" value="Search">
+    </form>
+    <br>
+    <form th:action="@{/main/message}" method="get">
+        <input type="submit" value="Messages">
+    </form>
+    <br>
+    <form th:action="@{/main/create}" method="get">
+        <input type="submit" value="Post news">
+    </form>
+    <br>
+    <form th:action="@{/main/news}" method="get">
+        <input type="submit" value="News">
+    </form>
+    <br>
+    <div th:if="${myComms.size() < 3}">
+        <form th:action="@{/main/community/create}" method="get">
+            <input type="submit" value="Create community">
+        </form>
+        <br>
+    </div>
+    <div th:if="${myComms.size() > 0}">
+        <form th:action="@{/main/community}" method="get">
+            <input type="submit" value="My communities">
+        </form>
+        <br>
+    </div>
+    <form th:action="@{/main/community/all}" method="get">
+        <input type="submit" value="All communities">
+    </form>
+    <br>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Logout">
+    </form>
+    <br>
+    <table>
+        <thead>
+        <tr>
+            <th>Theme</th>
+            <th>Description</th>
+            <th>Likes</th>
+            <th>Comments</th>
+            <th>Look Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${news.empty}">
+            <td colspan="2">You have not any news</td>
+        </tr>
+        <tr th:each="n : ${news}">
+            <td><span th:text="${n.theme}">Theme</span></td>
+            <td><span th:text="${n.description}">Description</span></td>
+            <td><span th:text="${n.like.size()}">Likes</span></td>
+            <td><span th:text="${n.comments.size()}">Comments</span></td>
+            <td>
+                <form th:action="@{/main/comments/{id}(id=${n.id})}" method="get">
+                    <input type="submit" value="Comment">
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

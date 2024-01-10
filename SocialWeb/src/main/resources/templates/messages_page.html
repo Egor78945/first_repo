@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Messages</title>
+</head>
+<body>
+<h1>Messages</h1><br>
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Chat</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${message.empty}">
+        <td colspan="2">You have not messages.</td>
+    </tr>
+    <tr th:each="m : ${message}">
+        <td><span th:text="${m.getKey().getId()}">Id</span></td>
+        <td><span th:text="${m.getKey().getName()}">Name</span></td>
+        <td><span th:text="${m.key.getSurname()}">Surname</span></td>
+        <td>
+            <form th:action="@{/main/messages/{id}(id=${m.key.getId()})}" method="get">
+                <input type="submit" value="Chat"/>
+            </form>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

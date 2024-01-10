@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+<h1>Enter your data's for registration:</h1><br>
+<form th:action="@{/auth/register}" method="post" th:object="${user}">
+    Name: <input th:field="*{name}" type="text" id="name" name="name"><br>
+    Surname: <input th:field="*{surname}" type="text" id="surname" name="surname"><br>
+    Status: <input th:field="*{status}" type="text" id="status" name="status"><br>
+    Email: <input th:field="*{email}" type="text" id="email" name="email"><br>
+    Age: <input th:field="*{age}" type="text" id="age" name="age"><br>
+    City: <input th:field="*{city}" type="text" id="city" name="city"><br>
+    Country: <input th:field="*{country}" type="text" id="country" name="country"><br>
+    Password: <input th:field="*{password}" type="password" id="password" name="password"><br>
+    <input type="submit" value="Register">
+</form>
+</body>
+</html>

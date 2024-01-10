@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Report</title>
+</head>
+<body>
+<h1>Report this news</h1><br>
+<form th:action="@{/main/report/news/{id}(id=${newsReport.id})}" th:object="${newsReport}" method="post">
+    Reason:<input type="text" th:field="*{reason}"><br>
+    Message:<input type="text" th:field="*{message}"><br>
+    <input type="submit" value="Report">
+</form>
+</body>
+</html>
