@@ -40,6 +40,9 @@ public class UserService implements UserDetailsService {
         UserDetailsImpl userDetails = new UserDetailsImpl();
         return userDetails.build(userRepository.findUserByEmail(username));
     }
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
 
     public User getUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
@@ -282,13 +285,17 @@ public class UserService implements UserDetailsService {
 
     public void addErrorsToBindingResultForMessages(User from, User to, BindingResult bindingResult) {
         if (from.getId().equals(to.getId())) {
+            log.info("message: you cant send messages to yourself. user1 = " + from + " | " + to);
             bindingResult.addError(new AttributeError("user", "id", "You cant send messages to yourself."));
         }
     }
 
     public void sendMessage(User from, User to, Message message) {
+        if (!to.getMessageList().containsKey(from)) {
+            to.getMessageList().put(from, new ArrayList<>());
+        }
         to.getMessageList().get(from).add(message.getMessage());
-        userRepository.save(to);
+        saveUser(to);
         log.info("message: user " + from.getId() + " sends a message to user " + to.getId() + ".");
     }
 
@@ -309,10 +316,6 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
         userRepository.save(friend);
         log.info("friendship: user " + friend.getId() + " has been deleted from user " + user.getId() + " friend list.");
-    }
-
-    public void saveUser(User user) {
-        userRepository.save(user);
     }
 
     public List<User> getAllBannedUsers() {

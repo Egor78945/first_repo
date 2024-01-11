@@ -17,7 +17,7 @@
     Age: <b th:text="${user.age}"/><br>
     City: <b th:text="${user.city}"/><br>
     Country: <b th:text="${user.country}"/><br>
-    <form th:action="@{/main/send/{id}(id=${user.id})}" method="get">
+    <form th:action="@{/main/send/{id}(id=${user.getId()})}" method="get">
         <input type="submit" value="Send message">
     </form>
     <br>

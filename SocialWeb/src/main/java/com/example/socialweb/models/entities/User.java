@@ -7,7 +7,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +16,11 @@ import java.util.Map;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +34,7 @@ public class User {
     private String status;
     @Column(name = "email")
     private String email;
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Community> communities;
     @Column(name = "age")
     private Integer age;
@@ -49,13 +53,13 @@ public class User {
     private String registerDate;
     @ElementCollection
     private Map<User, ArrayList<String>> messageList = new HashMap<>();
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<User> friendList = new ArrayList<>();
     @ElementCollection
     private Map<String, String> banHistory = new HashMap<>();
     @ElementCollection
     private Map<String, String> lockHistory = new HashMap<>();
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Report> listOfReports = new ArrayList<>();
     @Column(name = "isBan")
     private Boolean isBan;

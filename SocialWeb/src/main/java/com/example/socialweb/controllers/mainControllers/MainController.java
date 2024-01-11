@@ -32,14 +32,14 @@ public class MainController {
     private final ReportService reportService;
     private final PasswordEncoder passwordEncoder;
     private final CommunityService communityService;
-    private static User user;
-    private static Community community;
-    private static List<Community> myCommunities;
+    /*private static User user;*/
+    /*private static Community community;*/
+    /*private static List<Community> myCommunities;*/
 
     @GetMapping("/profile")
     public String profile(Principal principal, Model model) {
-        user = userService.getUserByEmail(principal.getName());
-        myCommunities = communityService.getAllCommunitiesByOwner(user);
+        User user = userService.getUserByEmail(principal.getName());
+        List<Community> myCommunities = communityService.getAllCommunitiesByOwner(user);
         model.addAttribute("user", user);
         model.addAttribute("news", user.getNews());
         model.addAttribute("myComms", myCommunities);
@@ -47,17 +47,19 @@ public class MainController {
     }
 
     @GetMapping("/update")
-    public String updateUser(Model model) {
+    public String updateUser(Model model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
         model.addAttribute("update", user);
         return "update_page";
     }
 
     @PostMapping("/update")
-    public String updateUser(@ModelAttribute("update") User model, BindingResult bindingResult) {
+    public String updateUser(@ModelAttribute("update") User model, BindingResult bindingResult, Principal principal) {
         userService.addErrorsToBindingResultForUpdate(bindingResult, model);
         if (bindingResult.hasErrors()) {
             return "redirect:/main/update";
         }
+        User user = userService.getUserByEmail(principal.getName());
         userService.updateUser(model, passwordEncoder, user);
         return "redirect:/main/profile";
     }
@@ -90,33 +92,37 @@ public class MainController {
     }
 
     @GetMapping("/profile/{id}")
-    public String searchProfile(@PathVariable("id") Long id, Model model) {
+    public String searchProfile(@PathVariable("id") Long id, Model model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
         model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("news", userService.getUserById(id).getNews());
         model.addAttribute("princ", user);
-        model.addAttribute("myComms", myCommunities);
+        model.addAttribute("myComms", communityService.getAllCommunitiesByOwner(user));
         return "searchProfile_page";
     }
 
     @GetMapping("/add/{id}")
-    public String friendshipRequest(@PathVariable("id") Long id) {
+    public String friendshipRequest(@PathVariable("id") Long id, Principal principal) {
         User userTo = userService.getUserById(id);
-        if (!userService.isFriend(userTo, user)) {
-            userService.friendRequest(user, userTo);
+        User userFrom = userService.getUserByEmail(principal.getName());
+        if (!userService.isFriend(userTo, userFrom)) {
+            userService.friendRequest(userFrom, userTo);
             return "redirect:/main/profile";
         }
         return "redirect:/main/profile";
     }
 
     @PostMapping("/friendship/accept/{id}")
-    public String positiveFriendshipResponse(@PathVariable("id") Long id) {
+    public String positiveFriendshipResponse(@PathVariable("id") Long id, Principal principal) {
         User from = userService.getUserById(id);
+        User user = userService.getUserByEmail(principal.getName());
         userService.addToFriend(user, from);
         return "redirect:/main/profile";
     }
 
     @GetMapping("/friends")
-    public String friends(Model model) {
+    public String friends(Model model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
         model.addAttribute("friends", user.getFriendList());
         return "friendList_page";
     }
@@ -128,26 +134,29 @@ public class MainController {
     }
 
     @PostMapping("/send/{id}")
-    public String message(@ModelAttribute("message") Message message, @PathVariable("id") Long id, BindingResult bindingResult) {
+    public String message(@ModelAttribute("message") Message message, @PathVariable("id") Long id, BindingResult bindingResult, Principal principal) {
         User to = userService.getUserById(id);
-        userService.addErrorsToBindingResultForMessages(user, to, bindingResult);
+        User from = userService.getUserByEmail(principal.getName());
+        userService.addErrorsToBindingResultForMessages(from, to, bindingResult);
         if (bindingResult.hasErrors()) {
             return "redirect:/main/profile";
         }
-        userService.sendMessage(user, to, message);
+        userService.sendMessage(from, to, message);
         return "redirect:/main/profile";
     }
 
     @GetMapping("/message")
-    public String message(Model model) {
+    public String message(Model model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
         model.addAttribute("message", user.getMessageList());
         return "messages_page";
     }
 
     @GetMapping("/messages/{id}")
-    public String messages(@PathVariable("id") Long id, Model model) {
+    public String messages(@PathVariable("id") Long id, Model model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
         User userMsg = userService.getUserById(id);
-        ArrayList<String> list = user.getMessageList().get(user);
+        ArrayList<String> list = user.getMessageList().get(userMsg);
         model.addAttribute("messages", list);
         model.addAttribute("user", userMsg);
         return "chat_page";
@@ -160,7 +169,8 @@ public class MainController {
     }
 
     @PostMapping("/create")
-    public String publicNews(@ModelAttribute("news") CreateNewsModel model) {
+    public String publicNews(@ModelAttribute("news") CreateNewsModel model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
         newsService.publicNews(model, user);
         return "redirect:/main/profile";
     }
@@ -209,14 +219,16 @@ public class MainController {
     }
 
     @PostMapping("/report/news/{id}")
-    public String report(@PathVariable("id") Long id, @ModelAttribute("newsReport") ReportModel model) {
+    public String report(@PathVariable("id") Long id, @ModelAttribute("newsReport") ReportModel model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
         News news = newsService.getNewsById(id);
         reportService.reportNews(user, news, model);
         return "redirect:/main/news";
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteFriend(@PathVariable("id") Long id) {
+    public String deleteFriend(@PathVariable("id") Long id, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
         User friend = userService.getUserById(id);
         userService.deleteFriend(user, friend);
         return "redirect:/main/friends";
@@ -229,22 +241,27 @@ public class MainController {
     }
 
     @PostMapping("/community/create")
-    public String createCommunity(@ModelAttribute("comm") CommunityModel model) {
+    public String createCommunity(@ModelAttribute("comm") CommunityModel model, Principal principal) {
         try {
+            User user = userService.getUserByEmail(principal.getName());
             communityService.createCommunity(model, user);
         } catch (Exception e) {
             log.info("community: " + e.getMessage());
         }
         return "redirect:/main/profile";
     }
-    @GetMapping("/report/community")
-    public String reportCommunity(Model model){
-        model.addAttribute("repModel", new ReportModel());
+
+    @GetMapping("/report/community/{id}")
+    public String reportCommunity(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("repModel", new ReportModel(id));
         return "reportCommunity_page";
     }
-    @PostMapping("/report/community")
-    public String reportCommunity(@ModelAttribute("repModel") ReportModel model){
+
+    @PostMapping("/report/community/{id}")
+    public String reportCommunity(@PathVariable("id") Long id, @ModelAttribute("repModel") ReportModel model, Principal principal) {
         try {
+            Community community = communityService.getCommunityById(id);
+            User user = userService.getUserByEmail(principal.getName());
             reportService.reportCommunity(community, model, user);
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -253,12 +270,13 @@ public class MainController {
     }
 
     @GetMapping("/community/search")
-    public String searchCommunity(Model model){
+    public String searchCommunity(Model model) {
         model.addAttribute("comSModel", new CommunitySearchModel());
         return "communitySearch_page";
     }
+
     @PostMapping("/community/search")
-    public String searchCommunity(@ModelAttribute("comSModel") CommunitySearchModel Rmodel, Model model){
+    public String searchCommunity(@ModelAttribute("comSModel") CommunitySearchModel Rmodel, Model model) {
         try {
             Community foundCommunity = communityService.findCommunityForUser(Rmodel);
             model.addAttribute("community", foundCommunity);
@@ -268,34 +286,40 @@ public class MainController {
             return "redirect:/main/profile";
         }
     }
+
     @PostMapping("/community/delete/{id}")
-    public String deleteCommunity(@PathVariable("id") Long id){
+    public String deleteCommunity(@PathVariable("id") Long id) {
         communityService.delete(id);
         return "redirect:/main/profile";
     }
+
     @GetMapping("/community")
-    public String getUserCommunities(Model model) {
+    public String getUserCommunities(Model model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
         model.addAttribute("comms", communityService.getAllCommunitiesByOwner(user));
         return "userCommunities_page";
     }
 
     @GetMapping("/community/{id}")
-    public String community(@PathVariable("id") Long id, Model model) {
-        community = communityService.getCommunityById(id);
+    public String community(@PathVariable("id") Long id, Model model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
+        Community community = communityService.getCommunityById(id);
         model.addAttribute("comm", community);
         model.addAttribute("user", user);
         return "community_page";
     }
 
-    @GetMapping("/community/message")
-    public String userToCommunityMessage( Model model) {
-        model.addAttribute("message", new Message());
+    @GetMapping("/community/message/{id}")
+    public String userToCommunityMessage(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("message", new Message(id));
         return "communityMessage_page";
     }
 
-    @PostMapping("/community/message")
-    public String userToCommunityMessage(@ModelAttribute("message") Message message) {
+    @PostMapping("/community/message/{id}")
+    public String userToCommunityMessage(@PathVariable("id") Long id, @ModelAttribute("message") Message message, Principal principal) {
         try {
+            User user = userService.getUserByEmail(principal.getName());
+            Community community = communityService.getCommunityById(id);
             communityService.userMessage(message, user, community);
         } catch (Exception e) {
             log.info("community: " + e.getMessage());
@@ -310,8 +334,9 @@ public class MainController {
     }
 
     @PostMapping("/community/subscribe/{id}")
-    public String subscribe(@PathVariable("id") Long id) {
+    public String subscribe(@PathVariable("id") Long id, Principal principal) {
         try {
+            User user = userService.getUserByEmail(principal.getName());
             communityService.subscribe(id, user);
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -320,8 +345,9 @@ public class MainController {
     }
 
     @PostMapping("/community/unsubscribe/{id}")
-    public String unsubscribe(@PathVariable("id") Long id) {
+    public String unsubscribe(@PathVariable("id") Long id, Principal principal) {
         try {
+            User user = userService.getUserByEmail(principal.getName());
             communityService.unsubscribe(id, user);
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -330,8 +356,9 @@ public class MainController {
     }
 
     @GetMapping("/community/invite/{id}")
-    public String invite(@PathVariable("id") Long userId, Model model) {
-        model.addAttribute("userComms", myCommunities);
+    public String invite(@PathVariable("id") Long userId, Model model, Principal principal) {
+        User user = userService.getUserByEmail(principal.getName());
+        model.addAttribute("userComms", communityService.getAllCommunitiesByOwner(user));
         model.addAttribute("userId", userId);
         return "communityInviteChoice_page";
     }
@@ -353,8 +380,9 @@ public class MainController {
     }
 
     @PostMapping("/report/user/{id}")
-    public String userReport(@ModelAttribute("repModel") ReportModel model, @PathVariable("id") Long id) {
+    public String userReport(@ModelAttribute("repModel") ReportModel model, @PathVariable("id") Long id, Principal principal) {
         try {
+            User user = userService.getUserByEmail(principal.getName());
             reportService.reportUser(model, id, user);
         } catch (Exception e) {
             log.info(e.getMessage());

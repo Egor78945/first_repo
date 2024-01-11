@@ -11,12 +11,12 @@
 <b th:text="'Subs count: ' + ' ' + ${comm.getSubscribers().size()}"/><br>
 <b th:text="'News: '"/><br>
 <div th:if="${comm.getOwner().getId() != user.getId()}">
-    <form th:action="@{/main/community/message}" method="get">
+    <form th:action="@{/main/community/message/{id}(id=${comm.getId()})}" method="get">
         <input type="submit" value="Message">
     </form>
     <br>
 </div>
-<form th:action="@{/main/report/community}" method="get">
+<form th:action="@{/main/report/community/{id}(id=${comm.getId()})}" method="get">
     <input type="submit" value="Report">
 </form>
 <br>

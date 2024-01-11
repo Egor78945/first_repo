@@ -1,15 +1,15 @@
 package com.example.socialweb.models.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "reports")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,13 +19,13 @@ public class Report {
     private String reason;
     @Column(name = "message")
     private String message;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User applicant;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User appealed;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private News news;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Community community;
     @Column(name = "date")
     private String date;
