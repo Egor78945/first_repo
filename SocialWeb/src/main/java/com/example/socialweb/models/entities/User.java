@@ -9,16 +9,12 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 public class User {
@@ -38,9 +34,6 @@ public class User {
     private List<Community> communities;
     @Column(name = "age")
     private Integer age;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private List<News> news = new ArrayList<>();
     @Column(name = "city")
     private String city;
     @Column(name = "role")
@@ -51,20 +44,36 @@ public class User {
     private String password;
     @Column(name = "registerDate")
     private String registerDate;
-    @ElementCollection
-    private Map<User, ArrayList<String>> messageList = new HashMap<>();
     @OneToMany(cascade = CascadeType.ALL)
-    private List<User> friendList = new ArrayList<>();
-    @ElementCollection
-    private Map<String, String> banHistory = new HashMap<>();
-    @ElementCollection
-    private Map<String, String> lockHistory = new HashMap<>();
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Report> listOfReports = new ArrayList<>();
+    private List<User> friends;
     @Column(name = "isBan")
     private Boolean isBan;
     @Column(name = "isLock")
     private Boolean isLock;
     @Column(name = "isClose")
     private Boolean closeProfile;
+    public User(){
+        communities = new ArrayList<>();
+        friends = new ArrayList<>();
+        registerDate = new Date(System.currentTimeMillis()).toString();
+    }
+    public void addFriend(User user){
+        friends.add(user);
+        user.getFriends().add(this);
+    }
+    public void subscribe(Community community){
+        communities.add(community);
+        community.getSubscribers().add(this);
+    }
+    public void removeFriend(User user){
+        friends.remove(user);
+        user.getFriends().remove(this);
+    }
+    public void unsubscribe(Community community){
+        communities.remove(community);
+        community.getSubscribers().remove(this);
+    }
+    public void like(News news){
+        news.getLike().add(this);
+    }
 }

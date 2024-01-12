@@ -1,11 +1,11 @@
 package com.example.socialweb.services;
 
+import com.example.socialweb.models.entities.Community;
 import com.example.socialweb.models.entities.News;
 import com.example.socialweb.models.entities.Report;
 import com.example.socialweb.models.entities.User;
 import com.example.socialweb.models.enums.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,18 +24,14 @@ public class UserDetailsImpl implements UserDetails {
     private String surname;
     private String status;
     private String email;
+    private List<Community> communities;
     private Integer age;
     private String city;
-    private String country;
     private Role role;
+    private String country;
     private String password;
     private String registerDate;
-    private Map<User, ArrayList<String>> messageList;
-    private List<News> news;
-    private List<User> friendList;
-    private Map<String, String> banHistory;
-    private Map<String, String> lockHistory;
-    private List<Report> listOfReports;
+    private List<User> friends;
     private Boolean isBan;
     private Boolean isLock;
     private Boolean closeProfile;
@@ -48,18 +44,14 @@ public class UserDetailsImpl implements UserDetails {
                 this.surname = user.getSurname(),
                 this.status = user.getStatus(),
                 this.email = user.getEmail(),
+                this.communities = user.getCommunities(),
                 this.age = user.getAge(),
                 this.city = user.getCity(),
-                this.country = user.getCountry(),
                 this.role = user.getRole(),
+                this.country = user.getCountry(),
                 this.password = user.getPassword(),
                 this.registerDate = user.getRegisterDate(),
-                this.messageList = user.getMessageList(),
-                this.news = user.getNews(),
-                this.friendList = user.getFriendList(),
-                this.banHistory = user.getBanHistory(),
-                this.lockHistory = user.getLockHistory(),
-                this.listOfReports = user.getListOfReports(),
+                this.friends = user.getFriends(),
                 this.isBan = user.getIsBan(),
                 this.isLock = user.getIsLock(),
                 this.closeProfile = user.getCloseProfile()

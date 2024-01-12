@@ -32,9 +32,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("user") RegisterBody body, BindingResult bindingResult) {
-        userService.addErrorsToBindingResultForRegister(bindingResult, body);
-        if (bindingResult.hasErrors()) {
+    public String register(@Valid @ModelAttribute("user") RegisterBody body) {
+        if (!userService.userDataIsValid(body)) {
             return "redirect:/auth/register";
         } else {
             userService.register(body, passwordEncoder);

@@ -1,14 +1,10 @@
 package com.example.socialweb.services;
 
-import com.example.socialweb.errors.AttributeError;
 import com.example.socialweb.models.entities.User;
 import com.example.socialweb.models.enums.Cities;
 import com.example.socialweb.models.enums.Countries;
 import com.example.socialweb.models.enums.Role;
-import com.example.socialweb.models.requestModels.Message;
 import com.example.socialweb.models.requestModels.RegisterBody;
-import com.example.socialweb.models.requestModels.ReportModel;
-import com.example.socialweb.models.requestModels.SearchUserModel;
 import com.example.socialweb.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,13 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -59,7 +50,6 @@ public class UserService implements UserDetailsService {
         user.setRole(Role.USER_ROLE);
         user.setCountry(registerBody.getCountry());
         user.setPassword(passwordEncoder.encode(registerBody.getPassword()));
-        user.setRegisterDate(new Date(System.currentTimeMillis()).toString());
         user.setIsLock(false);
         user.setIsBan(false);
         user.setCloseProfile(false);
@@ -129,54 +119,6 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public void addErrorsToBindingResultForRegister(BindingResult bindingResult, RegisterBody registerBody) {
-        if (!isValidNameOrSurname(registerBody.getName())) {
-            bindingResult.addError(new AttributeError("name", "name", "Your name should to be less 16 and greater 1."));
-        }
-        if (!isValidNameOrSurname(registerBody.getSurname())) {
-            bindingResult.addError(new AttributeError("surname", "surname", "Your name should to be less 16 and greater 1."));
-        }
-        if (!isValidCity(registerBody.getCity())) {
-            bindingResult.addError(new AttributeError("city", "city", "Unknown city."));
-        }
-        if (!isValidCountry(registerBody.getCountry())) {
-            bindingResult.addError(new AttributeError("country", "country", "Unknown country."));
-        }
-        if (!isValidEmail(registerBody.getEmail())) {
-            bindingResult.addError(new AttributeError("email", "email", "Invalid format."));
-        }
-        if (!isValidPassword(registerBody.getPassword())) {
-            bindingResult.addError(new AttributeError("password", "password", "Invalid password."));
-        }
-        if (!isValidStatus(registerBody.getStatus())) {
-            bindingResult.addError(new AttributeError("status", "status", "Invalid status length."));
-        }
-        if (userRepository.existsUserByEmail(registerBody.getEmail())) {
-            bindingResult.addError(new AttributeError("email", "email", "User with this email is already exists."));
-        }
-    }
-
-    public void addErrorsToBindingResultForUpdate(BindingResult bindingResult, User user) {
-        if (!isValidNameOrSurname(user.getName())) {
-            bindingResult.addError(new AttributeError("name", "name", "Your name should to be less 16 and greater 1."));
-        }
-        if (!isValidNameOrSurname(user.getSurname())) {
-            bindingResult.addError(new AttributeError("surname", "surname", "Your name should to be less 16 and greater 1."));
-        }
-        if (!isValidCity(user.getCity())) {
-            bindingResult.addError(new AttributeError("city", "city", "Unknown city."));
-        }
-        if (!isValidCountry(user.getCountry())) {
-            bindingResult.addError(new AttributeError("country", "country", "Unknown country."));
-        }
-        if (!isValidEmail(user.getEmail())) {
-            bindingResult.addError(new AttributeError("email", "email", "Invalid format."));
-        }
-        if (!isValidStatus(user.getStatus())) {
-            bindingResult.addError(new AttributeError("status", "status", "Invalid status length."));
-        }
-    }
-
     public boolean isValidEmail(String email) {
         if (email.endsWith("@gmail.com") || email.endsWith("@mail.ru")) {
             int dogIndex = email.indexOf("@");
@@ -229,94 +171,6 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public void updateUser(User updateModel, PasswordEncoder passwordEncoder, User user) {
-        user.setName(updateModel.getName());
-        user.setSurname(updateModel.getSurname());
-        user.setAge(updateModel.getAge());
-        user.setStatus(updateModel.getStatus());
-        user.setEmail(updateModel.getEmail());
-        user.setCity(updateModel.getCity());
-        user.setCountry(updateModel.getCountry());
-        user.setCloseProfile(updateModel.getCloseProfile());
-        userRepository.save(user);
-    }
-
-    public boolean isRealPassword(String password, String email, PasswordEncoder passwordEncoder) {
-        String userPassword = getUserByEmail(email).getPassword();
-        return passwordEncoder.matches(password, userPassword);
-    }
-
-    public void changeUserPassword(String newPassword, String email, PasswordEncoder passwordEncoder) {
-        User user = getUserByEmail(email);
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-    }
-
-    public List<User> search(SearchUserModel model) {
-        if (!model.getName().isEmpty() && !model.getSurname().isEmpty()) {
-            return userRepository.findAllByNameAndSurname(model.getName(), model.getSurname());
-        }
-        if (!model.getName().isEmpty() && model.getSurname().isEmpty()) {
-            return userRepository.findAllByName(model.getName());
-        }
-        if (model.getName().isEmpty() && !model.getSurname().isEmpty()) {
-            return userRepository.findAllBySurname(model.getSurname());
-        }
-        return new ArrayList<>();
-    }
-
-    public boolean isFriend(User user1, User user2) {
-        return user1.getFriendList().contains(user2);
-    }
-
-    public void friendRequest(User userFrom, User userTo) {
-        ArrayList<String> list = new ArrayList<>();
-        list.add("Wants to be your friend.");
-        if (!userTo.getMessageList().containsKey(userFrom)) {
-            userTo.getMessageList().put(userFrom, list);
-            userRepository.save(userTo);
-            log.info("friend request: user " + userFrom.getId() + " sends a friendship request to user " + userTo.getId() + ".");
-        } else {
-            userTo.getMessageList().get(userFrom).add("Wants to be your friend.");
-            userRepository.save(userTo);
-            log.info("friend request: user " + userFrom.getId() + " sends a friendship request to user " + userTo.getId() + ".");
-        }
-    }
-
-    public void addErrorsToBindingResultForMessages(User from, User to, BindingResult bindingResult) {
-        if (from.getId().equals(to.getId())) {
-            log.info("message: you cant send messages to yourself. user1 = " + from + " | " + to);
-            bindingResult.addError(new AttributeError("user", "id", "You cant send messages to yourself."));
-        }
-    }
-
-    public void sendMessage(User from, User to, Message message) {
-        if (!to.getMessageList().containsKey(from)) {
-            to.getMessageList().put(from, new ArrayList<>());
-        }
-        to.getMessageList().get(from).add(message.getMessage());
-        saveUser(to);
-        log.info("message: user " + from.getId() + " sends a message to user " + to.getId() + ".");
-    }
-
-    public void addToFriend(User user, User from) {
-        log.info("friendship: attempt to add user " + from.getId() + " to user " + from.getId() + " friend list.");
-        user.getFriendList().add(from);
-        from.getFriendList().add(user);
-        user.getMessageList().get(from).remove("Wants to be your friend.");
-        userRepository.save(user);
-        userRepository.save(from);
-        log.info("friendship: user " + from.getId() + " has been added to user " + user.getId() + " friend list.");
-    }
-
-    public void deleteFriend(User user, User friend) {
-        log.info("friendship: attempt to delete user " + friend.getId() + " from user " + user.getId() + " friend list.");
-        user.getFriendList().remove(friend);
-        friend.getFriendList().remove(user);
-        userRepository.save(user);
-        userRepository.save(friend);
-        log.info("friendship: user " + friend.getId() + " has been deleted from user " + user.getId() + " friend list.");
-    }
 
     public List<User> getAllBannedUsers() {
         return userRepository.findUserByIsBanTrue();

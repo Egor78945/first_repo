@@ -19,45 +19,4 @@ public class UserServiceLoggingAspect {
     public void afterRegisterAdvice() {
         log.info("register: the user successfully saved.");
     }
-
-    @Before("execution(public void addErrorsToBindingResultForRegister(org.springframework.validation.BindingResult,com.example.socialweb.models.requestModels.RegisterBody))")
-    public void beforeCheckRegisterAdvice() {
-        log.info("register: start checking user data...");
-    }
-
-    @After("execution(public void addErrorsToBindingResultForRegister(org.springframework.validation.BindingResult,com.example.socialweb.models.requestModels.RegisterBody))")
-    public void afterCheckRegisterAdvice() {
-        log.info("register: user data is valid.");
-    }
-
-    @Before("execution(public void addErrorsToBindingResultForUpdate(org.springframework.validation.BindingResult,com.example.socialweb.models.entities.User))")
-    public void beforeCheckUpdateAdvice() {
-        log.info("update: start checking user data...");
-    }
-
-    @After("execution(public void addErrorsToBindingResultForUpdate(org.springframework.validation.BindingResult,com.example.socialweb.models.entities.User))")
-    public void afterCheckUpdateAdvice() {
-        log.info("update: user data is valid...");
-    }
-
-    @Before("execution(public void updateUser(com.example.socialweb.models.entities.User,org.springframework.security.crypto.password.PasswordEncoder,com.example.socialweb.models.entities.User))")
-    public void beforeUpdateUserAdvice() {
-        log.info("update: attempt to update the user.");
-    }
-
-    @After("execution(public void updateUser(com.example.socialweb.models.entities.User,org.springframework.security.crypto.password.PasswordEncoder,com.example.socialweb.models.entities.User))")
-    public void afterUpdateUserAdvice() {
-        log.info("update: user have been updated.");
-    }
-
-    @Before("execution(public void changeUserPassword(java.lang.String,java.lang.String, org.springframework.security.crypto.password.PasswordEncoder))")
-    public void beforeChangePassword() {
-        log.info("update(password): attempt to update a password.");
-    }
-
-    @After("execution(public void changeUserPassword(java.lang.String,java.lang.String, org.springframework.security.crypto.password.PasswordEncoder))")
-    public void afterChangePassword() {
-        log.info("update(password): password has been updated.");
-    }
-
 }

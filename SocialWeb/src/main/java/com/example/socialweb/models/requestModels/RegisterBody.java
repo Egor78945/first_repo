@@ -20,11 +20,8 @@ import java.util.HashMap;
 public class RegisterBody {
     private String name;
     private String surname;
-    @Size(min = 1, max = 20, message = "Your status to long or to short, it should to be less 21 and greater 0.")
-    @NotEmpty
     private String status;
     private String email;
-    @Range(min = 14, message = "Minimum age for our website - 14.")
     private Integer age;
     private String city;
     private String country;

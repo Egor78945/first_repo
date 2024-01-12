@@ -10,8 +10,5 @@ import java.util.List;
 
 @Repository
 public interface CommunityRepository extends JpaRepository<Community, Long> {
-    Community findCommunityById(Long id);
-    List<Community> findAllByOwner(User user);
-    List<Community> findAllByMode(CommunityMode mode);
-    Community findCommunityByName(String name);
+
 }

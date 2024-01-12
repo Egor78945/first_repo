@@ -4,15 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.convert.DataSizeUnit;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @Table(name = "news")
@@ -23,14 +19,16 @@ public class News {
     private Long id;
     @Column(name = "politic")
     private String theme;
-    private String publicationDate;
+    @Column(name = "date")
+    private String date;
     @OneToMany(cascade = CascadeType.ALL)
-    private List<User> like = new ArrayList<>();
-    @ElementCollection
-    private Map<User, String> comments = new HashMap<>();
+    private List<User> like;
+    @Column(name = "description")
     private String description;
-    @Column(name = "user_id")
-    private Long publisherId;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Report> listOfReports = new ArrayList<>();
+    @OneToOne
+    private User publisher;
+    public News(){
+        like = new ArrayList<>();
+        date = new Date(System.currentTimeMillis()).toString();
+    }
 }
