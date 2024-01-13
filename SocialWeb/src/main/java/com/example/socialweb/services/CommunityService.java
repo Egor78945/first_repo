@@ -15,9 +15,4 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final UserRepository userRepository;
     private final ReportRepository reportRepository;
-
-    public Community getCommunityById(Long id) {
-        return communityRepository.findCommunityById(id);
-    }
-
 }

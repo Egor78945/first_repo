@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 public class UserServiceLoggingAspect {
     @Before("execution(public void com.example.socialweb.services.UserService.register(com.example.socialweb.models.requestModels.RegisterBody, org.springframework.security.crypto.password.PasswordEncoder))")
     public void beforeRegisterAdvice() {
-        log.info("register: attempt to save the user...");
+        log.info("register: attempt to register the user...");
     }
 
     @After("execution(public void com.example.socialweb.services.UserService.register(com.example.socialweb.models.requestModels.RegisterBody, org.springframework.security.crypto.password.PasswordEncoder))")
     public void afterRegisterAdvice() {
-        log.info("register: the user successfully saved.");
+        log.info("register: the user successfully registered.");
     }
 }

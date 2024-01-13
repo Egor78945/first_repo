@@ -12,8 +12,14 @@
     Status: <input th:field="*{status}" type="text" id="status" name="status"><br>
     Email: <input th:field="*{email}" type="text" id="email" name="email"><br>
     Age: <input th:field="*{age}" type="text" id="age" name="age"><br>
-    City: <input th:field="*{city}" type="text" id="city" name="city"><br>
-    Country: <input th:field="*{country}" type="text" id="country" name="country"><br>
+    City: <br>
+    Moscow: <input type="radio" value="Moscow" th:field="*{city}"><br>
+    St. Petersburg: <input type="radio" value="Saint-Petersburg" th:field="*{city}"><br>
+    Washington: <input type="radio" value="Washington" th:field="*{city}"><br>
+    New-York: <input type="radio" value="New-York" th:field="*{city}"><br>
+    Country: <br>
+    Russia: <input type="radio" value="Russia" th:field="*{country}"><br>
+    USA: <input type="radio" value="USA" th:field="*{country}"><br>
     Password: <input th:field="*{password}" type="password" id="password" name="password"><br>
     <input type="submit" value="Register">
 </form>

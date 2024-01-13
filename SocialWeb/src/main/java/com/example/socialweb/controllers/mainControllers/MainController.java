@@ -1,11 +1,11 @@
 package com.example.socialweb.controllers.mainControllers;
 
-import com.example.socialweb.services.CommunityService;
-import com.example.socialweb.services.NewsService;
-import com.example.socialweb.services.ReportService;
-import com.example.socialweb.services.UserService;
+import com.example.socialweb.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,9 +24,13 @@ public class MainController {
     private final PasswordEncoder passwordEncoder;
     private final CommunityService communityService;
 
+    @RequestMapping
+    public String mainPage(){
+        return "main_page";
+    }
     @GetMapping("/profile")
     public String profile(Principal principal, Model model) {
-
+        model.addAttribute("user", principal.getName());
         return "profile_page";
     }
 

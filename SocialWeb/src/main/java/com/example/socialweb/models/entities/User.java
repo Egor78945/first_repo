@@ -56,6 +56,9 @@ public class User {
         communities = new ArrayList<>();
         friends = new ArrayList<>();
         registerDate = new Date(System.currentTimeMillis()).toString();
+        isBan = false;
+        isLock = false;
+        closeProfile = false;
     }
     public void addFriend(User user){
         friends.add(user);

@@ -1,9 +1,11 @@
 package com.example.socialweb.controllers.securityControllers;
 
 import com.example.socialweb.models.requestModels.RegisterBody;
+import com.example.socialweb.services.UserDetailsImpl;
 import com.example.socialweb.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,12 +34,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("user") RegisterBody body) {
-        if (!userService.userDataIsValid(body)) {
-            return "redirect:/auth/register";
-        } else {
+    public String register(@ModelAttribute("user") RegisterBody body) {
+        if (userService.userDataIsValid(body)) {
             userService.register(body, passwordEncoder);
-            return "redirect:/main/profile";
+            return "redirect:/main";
+        } else {
+            return "redirect:/auth/register";
         }
     }
 }

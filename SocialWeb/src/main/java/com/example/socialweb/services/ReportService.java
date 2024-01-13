@@ -15,15 +15,4 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ReportService {
     private final ReportRepository reportRepository;
-    private final NewsRepository newsRepository;
-    private final UserRepository userRepository;
-    private final CommunityRepository communityRepository;
-    public Report getReportById(Long id){
-        return reportRepository.findReportById(id);
-    }
-    public Report getReportByNews(News news){
-        return reportRepository.findReportByNews(news);
-    }
-
-
 }

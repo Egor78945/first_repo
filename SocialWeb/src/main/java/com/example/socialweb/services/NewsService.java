@@ -14,13 +14,5 @@ import java.util.List;
 @Slf4j
 public class NewsService {
     private final NewsRepository newsRepository;
-    private final UserRepository userRepository;
-    private final UserService userService;
-    public News getNewsById(Long id){
-        return newsRepository.findNewsById(id);
-    }
-    public List<News> getAllNewsByPublisherId(Long id){
-        return newsRepository.findAllByPublisherId(id);
-    }
 
 }
