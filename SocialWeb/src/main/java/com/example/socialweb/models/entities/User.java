@@ -2,12 +2,15 @@ package com.example.socialweb.models.entities;
 
 
 import com.example.socialweb.models.enums.Role;
+import com.example.socialweb.models.requestModels.ProfileSettingsModel;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -78,5 +81,18 @@ public class User {
     }
     public void like(News news){
         news.getLike().add(this);
+    }
+    public void changePassword(String password, PasswordEncoder encoder){
+        this.password = encoder.encode(password);
+    }
+
+    public void updateProfile(ProfileSettingsModel model) {
+        name = model.getName();
+        surname = model.getSurname();
+        status = model.getStatus();
+        email = model.getEmail();
+        age = model.getAge();
+        country = model.getCountry();
+        city = model.getCity();
     }
 }

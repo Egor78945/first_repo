@@ -4,6 +4,8 @@ import com.example.socialweb.models.entities.User;
 import com.example.socialweb.models.enums.Cities;
 import com.example.socialweb.models.enums.Countries;
 import com.example.socialweb.models.enums.Role;
+import com.example.socialweb.models.requestModels.PasswordSettingsModel;
+import com.example.socialweb.models.requestModels.ProfileSettingsModel;
 import com.example.socialweb.models.requestModels.RegisterBody;
 import com.example.socialweb.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +64,7 @@ public class UserService implements UserDetailsService {
 
     public boolean isValidStatus(String status) {
         log.info("register: checking the status...");
-        if (!status.isEmpty() && status.length() <= 20) {
+        if (!status.isEmpty() && status.length() <= 80) {
             log.info("register: status is valid.");
             return true;
         }
@@ -152,6 +154,21 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
+    public boolean isValidEmailFormat(String email) {
+        log.info("register: checking the email...");
+        if (email.length() < 39 && email.length() > 15) {
+            if (email.endsWith("@mail.ru") && isContainsOnlyLettersAndDigits(email.substring(0, email.length() - 8))) {
+                log.info("register: email is valid.");
+                return true;
+            } else if (email.endsWith("@gmail.com") && isContainsOnlyLettersAndDigits(email.substring(0, email.length() - 10))) {
+                log.info("register: email is valid.");
+                return true;
+            }
+        }
+        log.info("register: email is invalid.");
+        return false;
+    }
+
     public boolean isValidPassword(String password) {
         log.info("register: checking the password...");
         if (password.length() <= 35 && password.length() >= 10 && isContainsOnlyLettersAndDigits(password)) {
@@ -212,5 +229,64 @@ public class UserService implements UserDetailsService {
             log.info("register: user data is invalid.");
         }
         return result;
+    }
+
+    public boolean userDataIsValid(ProfileSettingsModel body) {
+        log.info("register: checking user data...");
+        boolean result = true;
+        if (!isValidAge(body.getAge()))
+            result = false;
+        else if (!isValidNameOrSurname(body.getName()) || !isValidNameOrSurname(body.getSurname()))
+            result = false;
+        else if (!isValidCity(body.getCity()) || !isValidCountry(body.getCountry()))
+            result = false;
+        else if (!isValidEmailFormat(body.getEmail()))
+            result = false;
+        else if (!isValidStatus(body.getStatus()))
+            result = false;
+        if (result) {
+            log.info("register: user data is valid.");
+        } else {
+            log.info("register: user data is invalid.");
+        }
+        return result;
+    }
+
+    public boolean changePassword(PasswordSettingsModel model, User user, PasswordEncoder passwordEncoder) {
+        log.info("settings: attempt to change password...");
+        if (passwordEncoder.matches(model.getOldPassword(), user.getPassword())) {
+            log.info("settings: password confirmed.");
+            if (isValidPassword(model.getNewPassword())) {
+                log.info("settings: new password is valid, changing the password...");
+                user.changePassword(model.getNewPassword(), passwordEncoder);
+                log.info("settings: password successfully changed.");
+                log.info("settings: saving the user...");
+                saveUser(user);
+                log.info("settings: user successfully saved.");
+                return true;
+            } else {
+                log.info("settings: new password is invalid.");
+                return false;
+            }
+        } else {
+            log.info("settings: password is not confirmed.");
+            return false;
+        }
+    }
+
+    public boolean updateProfile(ProfileSettingsModel model, User user) {
+        log.info("settings: attempt to update user profile...");
+        if (userDataIsValid(model)) {
+            log.info("settings: updating user profile...");
+            user.updateProfile(model);
+            log.info("settings: user profile successfully updated.");
+            log.info("settings: saving the user...");
+            saveUser(user);
+            log.info("settings: user successfully saved.");
+            return true;
+        } else {
+            log.info("settings: user profile is not updated.");
+            return false;
+        }
     }
 }

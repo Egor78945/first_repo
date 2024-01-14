@@ -5,6 +5,13 @@
     <title>Profile</title>
 </head>
 <body>
-<h1 th:text="${user}"/>
+<h1 th:text="${user.getName()} + ' ' + ${user.getSurname()}"/>
+<h1 th:text="'Status: ' + ${user.getStatus()}"/>
+<h1 th:text="'Country: ' + ${user.getCountry()}"/>
+<h1 th:text="'City: ' + ${user.getCity()}"/>
+<h1 th:text="'Age: ' + ${user.getAge()}"/><br>
+<form th:action="@{/main/settings}" method="get">
+    <input type="submit" value="Settings">
+</form>
 </body>
 </html>
