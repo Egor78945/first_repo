@@ -3,6 +3,7 @@ package com.example.socialweb.controllers.mainControllers;
 import com.example.socialweb.models.entities.User;
 import com.example.socialweb.models.requestModels.PasswordSettingsModel;
 import com.example.socialweb.models.requestModels.ProfileSettingsModel;
+import com.example.socialweb.models.requestModels.UserSearchModel;
 import com.example.socialweb.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,6 +41,11 @@ public class MainController {
             user = userService.getUserByEmail(principal.getName());
         model.addAttribute("user", user);
         return "profile_page";
+    }
+    @GetMapping("/profile/{id}")
+    public String profile(@PathVariable("id") Long id, Model model){
+        model.addAttribute("user", userService.getUserById(id));
+        return "search_user_profile_page";
     }
 
     @GetMapping("/settings")
@@ -74,5 +81,27 @@ public class MainController {
             return "redirect:/main/profile";
         else
             return "redirect:/main/settings";
+    }
+    @GetMapping("/user/search")
+    public String userSearch(Model model) {
+        model.addAttribute("search", new UserSearchModel());
+        return "search_user_page";
+    }
+    @PostMapping("/user/search")
+    public String userSearch(@ModelAttribute("search") UserSearchModel searchModel, Model model){
+        List<User> users = null;
+        try {
+            users = userService.search(searchModel);
+            model.addAttribute("users", users);
+            return "search_user_result_page";
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return "redirect:/main/user/search";
+        }
+       /* if(users.isEmpty())
+            return "redirect:/main/user/search";
+        else
+            model.addAttribute("users", users);
+        return "search_user_result_page";*/
     }
 }

@@ -22,5 +22,9 @@
     USA: <input type="radio" value="USA" th:field="*{country}"><br>
     <input type="submit" value="Change">
 </form>
+<br>
+<form th:action="@{/main/profile}" method="get">
+    <input type="submit" value="Back to my profile">
+</form>
 </body>
 </html>

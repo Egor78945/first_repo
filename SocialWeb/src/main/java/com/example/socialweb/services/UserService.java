@@ -7,6 +7,7 @@ import com.example.socialweb.models.enums.Role;
 import com.example.socialweb.models.requestModels.PasswordSettingsModel;
 import com.example.socialweb.models.requestModels.ProfileSettingsModel;
 import com.example.socialweb.models.requestModels.RegisterBody;
+import com.example.socialweb.models.requestModels.UserSearchModel;
 import com.example.socialweb.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -287,6 +288,43 @@ public class UserService implements UserDetailsService {
         } else {
             log.info("settings: user profile is not updated.");
             return false;
+        }
+    }
+
+    public List<User> getAllByName(String name) {
+        return userRepository.findAllByName(name);
+    }
+
+    public List<User> getAllBySurname(String surname) {
+        return userRepository.findAllBySurname(surname);
+    }
+
+    public List<User> getAllByNameAndSurname(String name, String surname) {
+        return userRepository.findAllByNameAndSurname(name, surname);
+    }
+
+    public boolean containsByNameAndSurname(String name, String surname) {
+        return userRepository.existsUserByNameAndSurname(name, surname);
+    }
+
+    public boolean containsByName(String name) {
+        return userRepository.existsUserByName(name);
+    }
+
+    public boolean containsBySurname(String surname) {
+        return userRepository.existsUserBySurname(surname);
+    }
+
+    public List<User> search(UserSearchModel model) throws Exception {
+        log.info("search: attempt to find user...");
+        if (!model.getName().isEmpty() && !model.getSurname().isEmpty() && containsByNameAndSurname(model.getName(), model.getSurname())) {
+            return getAllByNameAndSurname(model.getName(), model.getSurname());
+        } else if (!model.getName().isEmpty() && model.getSurname().isEmpty() && containsByName(model.getName())) {
+            return getAllByName(model.getName());
+        } else if (model.getName().isEmpty() && !model.getSurname().isEmpty() && containsBySurname(model.getSurname())) {
+            return getAllBySurname(model.getSurname());
+        } else {
+            throw new Exception("search: user is not found.");
         }
     }
 }
