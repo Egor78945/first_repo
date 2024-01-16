@@ -16,10 +16,8 @@ import java.util.*;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
 @AllArgsConstructor
-@EqualsAndHashCode
+@Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +45,7 @@ public class User {
     private String password;
     @Column(name = "registerDate")
     private String registerDate;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<User> friends;
     @Column(name = "isBan")
     private Boolean isBan;
@@ -55,7 +53,8 @@ public class User {
     private Boolean isLock;
     @Column(name = "isClose")
     private Boolean closeProfile;
-    public User(){
+
+    public User() {
         communities = new ArrayList<>();
         friends = new ArrayList<>();
         registerDate = new Date(System.currentTimeMillis()).toString();
@@ -63,26 +62,32 @@ public class User {
         isLock = false;
         closeProfile = false;
     }
-    public void addFriend(User user){
+
+    public void addFriend(User user) {
         friends.add(user);
         user.getFriends().add(this);
     }
-    public void subscribe(Community community){
+
+    public void subscribe(Community community) {
         communities.add(community);
         community.getSubscribers().add(this);
     }
-    public void removeFriend(User user){
+
+    public void removeFriend(User user) {
         friends.remove(user);
         user.getFriends().remove(this);
     }
-    public void unsubscribe(Community community){
+
+    public void unsubscribe(Community community) {
         communities.remove(community);
         community.getSubscribers().remove(this);
     }
-    public void like(News news){
+
+    public void like(News news) {
         news.getLike().add(this);
     }
-    public void changePassword(String password, PasswordEncoder encoder){
+
+    public void changePassword(String password, PasswordEncoder encoder) {
         this.password = encoder.encode(password);
     }
 
@@ -94,5 +99,18 @@ public class User {
         age = model.getAge();
         country = model.getCountry();
         city = model.getCity();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(status, user.status) && Objects.equals(email, user.email) && Objects.equals(communities, user.communities) && Objects.equals(age, user.age) && Objects.equals(city, user.city) && role == user.role && Objects.equals(country, user.country) && Objects.equals(password, user.password) && Objects.equals(registerDate, user.registerDate) && Objects.equals(friends, user.friends) && Objects.equals(isBan, user.isBan) && Objects.equals(isLock, user.isLock) && Objects.equals(closeProfile, user.closeProfile);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname, status, email, communities, age, city, role, country, password, registerDate, friends, isBan, isLock, closeProfile);
     }
 }

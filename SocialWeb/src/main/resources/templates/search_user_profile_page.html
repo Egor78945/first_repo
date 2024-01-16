@@ -6,12 +6,18 @@
 </head>
 <body>
 <h1 th:text="'User profile'"/>
-<h1 th:text="${user.getName()} + ' ' + ${user.getSurname()}"/>
-<h1 th:text="'Id: ' + ${user.getId()}"/>
-<h1 th:text="'Status: ' + ${user.getStatus()}"/>
-<h1 th:text="'Country: ' + ${user.getCountry()}"/>
-<h1 th:text="'City: ' + ${user.getCity()}"/>
-<h1 th:text="'Age: ' + ${user.getAge()}"/><br>
+<h1 th:text="${user_profile.getName()} + ' ' + ${user_profile.getSurname()}"/>
+<h1 th:text="'Id: ' + ${user_profile.getId()}"/>
+<h1 th:text="'Status: ' + ${user_profile.getStatus()}"/>
+<h1 th:text="'Country: ' + ${user_profile.getCountry()}"/>
+<h1 th:text="'City: ' + ${user_profile.getCity()}"/>
+<h1 th:text="'Age: ' + ${user_profile.getAge()}"/><br>
+<div th:if="${(!user.getFriends().contains(user_profile)) && (user.getId() != user_profile.getId())}">
+    <form th:action="@{/main/user/friends/add/{id}(id=${user_profile.getId()})}" method="post">
+        <input type="submit" value="Add">
+    </form>
+</div>
+<br>
 <form th:action="@{/main/profile}" method="get">
     <input type="submit" value="Back to my profile">
 </form>

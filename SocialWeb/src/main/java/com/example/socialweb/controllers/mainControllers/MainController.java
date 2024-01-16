@@ -42,9 +42,11 @@ public class MainController {
         model.addAttribute("user", user);
         return "profile_page";
     }
+
     @GetMapping("/profile/{id}")
-    public String profile(@PathVariable("id") Long id, Model model){
-        model.addAttribute("user", userService.getUserById(id));
+    public String profile(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("user_profile", userService.getUserById(id));
+        model.addAttribute("user", user);
         return "search_user_profile_page";
     }
 
@@ -82,13 +84,15 @@ public class MainController {
         else
             return "redirect:/main/settings";
     }
+
     @GetMapping("/user/search")
     public String userSearch(Model model) {
         model.addAttribute("search", new UserSearchModel());
         return "search_user_page";
     }
+
     @PostMapping("/user/search")
-    public String userSearch(@ModelAttribute("search") UserSearchModel searchModel, Model model){
+    public String userSearch(@ModelAttribute("search") UserSearchModel searchModel, Model model) {
         List<User> users = null;
         try {
             users = userService.search(searchModel);
@@ -98,10 +102,23 @@ public class MainController {
             log.info(e.getMessage());
             return "redirect:/main/user/search";
         }
-       /* if(users.isEmpty())
-            return "redirect:/main/user/search";
-        else
-            model.addAttribute("users", users);
-        return "search_user_result_page";*/
+    }
+
+    @GetMapping("/user/friends")
+    public String userFriends(Model model) {
+        model.addAttribute("friends", user.getFriends());
+        return "user_friends_page";
+    }
+
+    @PostMapping("/user/friends/add/{id}")
+    public String addFriend(@PathVariable("id") Long id) {
+        userService.addFriend(user, userService.getUserById(id));
+        return "redirect:/main/user/friends";
+    }
+
+    @PostMapping("/user/friends/remove/{id}")
+    public String removeFriend(@PathVariable("id") Long id) {
+        userService.removeFriend(user, userService.getUserById(id));
+        return "redirect:/main/user/friends";
     }
 }

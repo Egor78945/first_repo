@@ -327,4 +327,41 @@ public class UserService implements UserDetailsService {
             throw new Exception("search: user is not found.");
         }
     }
+
+    public void addFriend(User user, User friend) {
+        log.info("service: attempt to add user with id " + friend.getId() + " to user with id " + user.getId() + " friend list...");
+        if(!user.getId().equals(friend.getId())) {
+            if (!user.getFriends().contains(friend)) {
+                user.addFriend(friend);
+                log.info("service: user with id " + friend.getId() + " added to user with id " + user.getId() + " friend list, saving the users...");
+                saveUser(user);
+                log.info("service: user with id " + user.getId() + " has been saved.");
+                saveUser(friend);
+                log.info("service: user with id " + friend.getId() + " has been saved.");
+            } else {
+                log.info("service: users is already friends.");
+            }
+        } else {
+            log.info("service: you cant add yourself to your friend list.");
+        }
+    }
+
+    public void removeFriend(User user, User friend) {
+        log.info("service: attempt to remove user with id " + friend.getId() + " from user with id " + user.getId() + " friend list...");
+        System.out.println(user.getFriends().contains(friend));
+        if(!user.getId().equals(friend.getId())) {
+            if (user.getFriends().contains(friend)) {
+                user.removeFriend(friend);
+                log.info("service: user with id " + friend.getId() + " removed from user with id " + user.getId() + " friend list, saving the users...");
+                saveUser(user);
+                log.info("service: user with id " + user.getId() + " has been saved.");
+                saveUser(friend);
+                log.info("service: user with id " + friend.getId() + " has been saved.");
+            } else {
+                log.info("service: users is not friends.");
+            }
+        } else {
+            log.info("service: you cant remove yourself from your friend list.");
+        }
+    }
 }
