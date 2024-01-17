@@ -53,11 +53,14 @@ public class User {
     private Boolean isLock;
     @Column(name = "isClose")
     private Boolean closeProfile;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<User> messages;
 
     public User() {
         communities = new ArrayList<>();
         friends = new ArrayList<>();
         registerDate = new Date(System.currentTimeMillis()).toString();
+        messages = new HashSet<>();
         isBan = false;
         isLock = false;
         closeProfile = false;

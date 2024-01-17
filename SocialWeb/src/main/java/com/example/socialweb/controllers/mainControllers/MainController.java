@@ -1,6 +1,8 @@
 package com.example.socialweb.controllers.mainControllers;
 
+import com.example.socialweb.models.entities.Message;
 import com.example.socialweb.models.entities.User;
+import com.example.socialweb.models.requestModels.MessageBody;
 import com.example.socialweb.models.requestModels.PasswordSettingsModel;
 import com.example.socialweb.models.requestModels.ProfileSettingsModel;
 import com.example.socialweb.models.requestModels.UserSearchModel;
@@ -24,10 +26,8 @@ import java.util.List;
 @Slf4j
 public class MainController {
     private final UserService userService;
-    private final NewsService newsService;
-    private final ReportService reportService;
     private final PasswordEncoder passwordEncoder;
-    private final CommunityService communityService;
+    private final MessageService messageService;
     private User user;
 
     @RequestMapping
@@ -37,7 +37,7 @@ public class MainController {
 
     @GetMapping("/profile")
     public String profile(Principal principal, Model model) {
-        if(user == null)
+        if (user == null)
             user = userService.getCurrentUser(principal);
         model.addAttribute("user", user);
         return "profile_page";
@@ -45,9 +45,12 @@ public class MainController {
 
     @GetMapping("/profile/{id}")
     public String profile(@PathVariable("id") Long id, Model model, Principal principal) {
-        model.addAttribute("user_profile", userService.getUserById(id));
-        model.addAttribute("user", userService.getCurrentUser(principal));
-        return "search_user_profile_page";
+        if (!user.getId().equals(id)) {
+            model.addAttribute("user_profile", userService.getUserById(id));
+            model.addAttribute("user", userService.getCurrentUser(principal));
+            return "search_user_profile_page";
+        } else
+            return "redirect:/main/profile";
     }
 
     @GetMapping("/settings")
@@ -121,5 +124,28 @@ public class MainController {
         userService.removeFriend(userService.getCurrentUser(principal), userService.getUserById(id));
         user = null;
         return "redirect:/main/profile";
+    }
+
+    @GetMapping("/message/send/{id}")
+    public String messageTo(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("message", new MessageBody(id));
+        return "message_to_page";
+    }
+
+    @PostMapping("/message/send/{id}")
+    public String messageTo(@PathVariable("id") Long id, @ModelAttribute("message") MessageBody body, Principal principal) {
+        messageService.sendMessageTo(body, userService.getCurrentUser(principal), id);
+        return "redirect:/main/profile";
+    }
+    @GetMapping("/messages")
+    public String messages(Model model){
+        model.addAttribute("messages", user.getMessages());
+        return "messages_page";
+    }
+    @GetMapping("/messages/{id}")
+    public String messages(@PathVariable("id") Long id, Model model){
+        List<Message> list = messageService.getAllBySenderIdAndRecipientId(id, user.getId());
+        model.addAttribute("messages", list);
+        return "messages_by_user_page";
     }
 }

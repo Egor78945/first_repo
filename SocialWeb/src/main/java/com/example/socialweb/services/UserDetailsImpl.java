@@ -36,6 +36,7 @@ public class UserDetailsImpl implements UserDetails {
     private Boolean isBan;
     private Boolean isLock;
     private Boolean closeProfile;
+    private Set<User> messages;
 
 
     public UserDetailsImpl build(User user) {
@@ -55,7 +56,8 @@ public class UserDetailsImpl implements UserDetails {
                 this.friends = user.getFriends(),
                 this.isBan = user.getIsBan(),
                 this.isLock = user.getIsLock(),
-                this.closeProfile = user.getCloseProfile()
+                this.closeProfile = user.getCloseProfile(),
+                this.messages = user.getMessages()
         );
     }
 

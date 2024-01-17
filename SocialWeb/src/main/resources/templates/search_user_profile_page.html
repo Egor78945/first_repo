@@ -22,7 +22,11 @@
         <form th:action="@{/main/user/friends/remove/{id}(id=${user_profile.getId()})}" method="post">
             <input type="submit" value="Remove">
         </form>
+
     </div>
+    <form th:action="@{/main/message/send/{id}(id=${user_profile.getId()})}" method="get">
+        <input type="submit" value="Send message">
+    </form>
 </div>
 <br>
 <form th:action="@{/main/profile}" method="get">
