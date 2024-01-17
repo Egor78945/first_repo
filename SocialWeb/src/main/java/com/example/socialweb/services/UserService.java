@@ -16,7 +16,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -29,6 +31,9 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDetailsImpl userDetails = new UserDetailsImpl();
         return userDetails.build(userRepository.findUserByEmail(username));
+    }
+    public User getCurrentUser(Principal principal){
+        return getUserByEmail(principal.getName());
     }
 
     public User getUserById(Long id) {
@@ -348,7 +353,7 @@ public class UserService implements UserDetailsService {
 
     public void removeFriend(User user, User friend) {
         log.info("service: attempt to remove user with id " + friend.getId() + " from user with id " + user.getId() + " friend list...");
-        System.out.println(user.getFriends().contains(friend));
+        System.out.println(user.getFriends().get(0).equals(friend));
         if(!user.getId().equals(friend.getId())) {
             if (user.getFriends().contains(friend)) {
                 user.removeFriend(friend);

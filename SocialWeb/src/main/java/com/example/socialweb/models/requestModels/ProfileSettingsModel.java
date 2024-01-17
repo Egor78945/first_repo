@@ -16,8 +16,9 @@ public class ProfileSettingsModel {
     private Integer age;
     private String city;
     private String country;
+    private boolean closeProfile;
 
-    public ProfileSettingsModel build(User user){
+    public ProfileSettingsModel build(User user) {
         return new ProfileSettingsModel(
                 name = user.getName(),
                 surname = user.getSurname(),
@@ -25,7 +26,8 @@ public class ProfileSettingsModel {
                 email = user.getEmail(),
                 age = user.getAge(),
                 city = user.getCity(),
-                country = user.getCountry()
+                country = user.getCountry(),
+                closeProfile = user.getCloseProfile()
         );
     }
 }

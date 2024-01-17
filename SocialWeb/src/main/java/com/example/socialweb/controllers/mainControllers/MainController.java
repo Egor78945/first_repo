@@ -37,16 +37,16 @@ public class MainController {
 
     @GetMapping("/profile")
     public String profile(Principal principal, Model model) {
-        if (user == null)
-            user = userService.getUserByEmail(principal.getName());
+        if(user == null)
+            user = userService.getCurrentUser(principal);
         model.addAttribute("user", user);
         return "profile_page";
     }
 
     @GetMapping("/profile/{id}")
-    public String profile(@PathVariable("id") Long id, Model model) {
+    public String profile(@PathVariable("id") Long id, Model model, Principal principal) {
         model.addAttribute("user_profile", userService.getUserById(id));
-        model.addAttribute("user", user);
+        model.addAttribute("user", userService.getCurrentUser(principal));
         return "search_user_profile_page";
     }
 
@@ -78,7 +78,6 @@ public class MainController {
 
     @PostMapping("/settings/profile")
     public String profile(@ModelAttribute("profile") ProfileSettingsModel model) {
-        System.out.println(user);
         if (userService.updateProfile(model, user))
             return "redirect:/main/profile";
         else
@@ -111,14 +110,16 @@ public class MainController {
     }
 
     @PostMapping("/user/friends/add/{id}")
-    public String addFriend(@PathVariable("id") Long id) {
-        userService.addFriend(user, userService.getUserById(id));
-        return "redirect:/main/user/friends";
+    public String addFriend(@PathVariable("id") Long id, Principal principal) {
+        userService.addFriend(userService.getCurrentUser(principal), userService.getUserById(id));
+        user = null;
+        return "redirect:/main/profile";
     }
 
     @PostMapping("/user/friends/remove/{id}")
-    public String removeFriend(@PathVariable("id") Long id) {
-        userService.removeFriend(user, userService.getUserById(id));
-        return "redirect:/main/user/friends";
+    public String removeFriend(@PathVariable("id") Long id, Principal principal) {
+        userService.removeFriend(userService.getCurrentUser(principal), userService.getUserById(id));
+        user = null;
+        return "redirect:/main/profile";
     }
 }

@@ -7,15 +7,22 @@
 <body>
 <h1 th:text="'User profile'"/>
 <h1 th:text="${user_profile.getName()} + ' ' + ${user_profile.getSurname()}"/>
-<h1 th:text="'Id: ' + ${user_profile.getId()}"/>
-<h1 th:text="'Status: ' + ${user_profile.getStatus()}"/>
-<h1 th:text="'Country: ' + ${user_profile.getCountry()}"/>
-<h1 th:text="'City: ' + ${user_profile.getCity()}"/>
-<h1 th:text="'Age: ' + ${user_profile.getAge()}"/><br>
-<div th:if="${(!user.getFriends().contains(user_profile)) && (user.getId() != user_profile.getId())}">
-    <form th:action="@{/main/user/friends/add/{id}(id=${user_profile.getId()})}" method="post">
-        <input type="submit" value="Add">
-    </form>
+<div th:if="${!user_profile.getCloseProfile()}">
+    <h1 th:text="'Id: ' + ${user_profile.getId()}"/>
+    <h1 th:text="'Status: ' + ${user_profile.getStatus()}"/>
+    <h1 th:text="'Country: ' + ${user_profile.getCountry()}"/>
+    <h1 th:text="'City: ' + ${user_profile.getCity()}"/>
+    <h1 th:text="'Age: ' + ${user_profile.getAge()}"/><br>
+    <div th:if="${!user.getFriends().contains(user_profile)}">
+        <form th:action="@{/main/user/friends/add/{id}(id=${user_profile.getId()})}" method="post">
+            <input type="submit" value="Add">
+        </form>
+    </div>
+    <div th:if="${user.getFriends().contains(user_profile)}">
+        <form th:action="@{/main/user/friends/remove/{id}(id=${user_profile.getId()})}" method="post">
+            <input type="submit" value="Remove">
+        </form>
+    </div>
 </div>
 <br>
 <form th:action="@{/main/profile}" method="get">

@@ -99,18 +99,18 @@ public class User {
         age = model.getAge();
         country = model.getCountry();
         city = model.getCity();
+        closeProfile = model.isCloseProfile();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(status, user.status) && Objects.equals(email, user.email) && Objects.equals(communities, user.communities) && Objects.equals(age, user.age) && Objects.equals(city, user.city) && role == user.role && Objects.equals(country, user.country) && Objects.equals(password, user.password) && Objects.equals(registerDate, user.registerDate) && Objects.equals(friends, user.friends) && Objects.equals(isBan, user.isBan) && Objects.equals(isLock, user.isLock) && Objects.equals(closeProfile, user.closeProfile);
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getName(), user.getName()) && Objects.equals(getSurname(), user.getSurname()) && Objects.equals(getStatus(), user.getStatus()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getCommunities(), user.getCommunities()) && Objects.equals(getAge(), user.getAge()) && Objects.equals(getCity(), user.getCity()) && getRole() == user.getRole() && Objects.equals(getCountry(), user.getCountry()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getRegisterDate(), user.getRegisterDate()) && Objects.equals(getFriends(), user.getFriends()) && Objects.equals(getIsBan(), user.getIsBan()) && Objects.equals(getIsLock(), user.getIsLock()) && Objects.equals(getCloseProfile(), user.getCloseProfile());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, surname, status, email, communities, age, city, role, country, password, registerDate, friends, isBan, isLock, closeProfile);
+        return Objects.hash(getId(), getName(), getSurname(), getStatus(), getEmail(), getCommunities(), getAge(), getCity(), getRole(), getCountry(), getPassword(), getRegisterDate(), getFriends(), getIsBan(), getIsLock(), getCloseProfile());
     }
 }
