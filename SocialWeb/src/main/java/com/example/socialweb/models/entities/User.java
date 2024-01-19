@@ -31,7 +31,7 @@ public class User {
     private String status;
     @Column(name = "email")
     private String email;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Community> communities;
     @Column(name = "age")
     private Integer age;
@@ -88,6 +88,9 @@ public class User {
 
     public void like(News news) {
         news.getLike().add(this);
+    }
+    public void unlike(News news){
+        news.getLike().remove(this);
     }
 
     public void changePassword(String password, PasswordEncoder encoder) {

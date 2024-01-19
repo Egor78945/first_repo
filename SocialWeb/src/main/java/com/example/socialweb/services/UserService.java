@@ -41,17 +41,17 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserById(id);
     }
 
-    public boolean containsUserByEmail(String email) {
+    private boolean containsUserByEmail(String email) {
         return userRepository.existsUserByEmail(email);
     }
 
-    public void saveUser(User user) {
+    private void saveUser(User user) {
         log.info("system: attempt to save or update the user...");
         userRepository.save(user);
         log.info("system: user has been saved or updated.");
     }
 
-    public User getUserByEmail(String email) {
+    private User getUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
 
@@ -69,7 +69,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public boolean isValidStatus(String status) {
+    private boolean isValidStatus(String status) {
         log.info("register: checking the status...");
         if (!status.isEmpty() && status.length() <= 80) {
             log.info("register: status is valid.");
@@ -79,7 +79,7 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean isValidCountry(String country) {
+    private boolean isValidCountry(String country) {
         log.info("register: checking the country...");
         if (!country.isEmpty()) {
             Countries countries = new Countries();
@@ -93,7 +93,7 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean isValidCity(String city) {
+    private boolean isValidCity(String city) {
         log.info("register: checking the city...");
         if (!city.isEmpty()) {
             Cities cities = new Cities();
@@ -108,7 +108,7 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean isValidNameOrSurname(String nameOrSurname) {
+    private boolean isValidNameOrSurname(String nameOrSurname) {
         log.info("register: checking name or surname...");
         if (nameOrSurname.length() > 2 && nameOrSurname.length() < 16 && isContainsOnlyLetters(nameOrSurname)) {
             log.info("register: name or surname is valid.");
@@ -118,7 +118,7 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean isContainsOnlyLetters(String word) {
+    private boolean isContainsOnlyLetters(String word) {
         log.info("service: checking contains only letters...");
         for (char i : word.toCharArray()) {
             if (!Character.isLetter(i)) {
@@ -130,7 +130,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public boolean isContainsOnlyLettersAndDigits(String word) {
+    private boolean isContainsOnlyLettersAndDigits(String word) {
         log.info("service: checking is contains only letters and digits...");
         for (char i : word.toCharArray()) {
             if (!Character.isLetter(i) && !Character.isDigit(i)) {
@@ -142,7 +142,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public boolean isValidEmail(String email) {
+    private boolean isValidEmail(String email) {
         log.info("register: checking the email...");
         if (containsUserByEmail(email)) {
             log.info("register: user with this email already exists.");
@@ -161,7 +161,7 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean isValidEmailFormat(String email) {
+    private boolean isValidEmailFormat(String email) {
         log.info("register: checking the email...");
         if (email.length() < 39 && email.length() > 15) {
             if (email.endsWith("@mail.ru") && isContainsOnlyLettersAndDigits(email.substring(0, email.length() - 8))) {
@@ -176,7 +176,7 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean isValidPassword(String password) {
+    private boolean isValidPassword(String password) {
         log.info("register: checking the password...");
         if (password.length() <= 35 && password.length() >= 10 && isContainsOnlyLettersAndDigits(password)) {
             int letters = 0;
@@ -204,7 +204,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserByIsBanTrue();
     }
 
-    public boolean isValidAge(Integer age) {
+    private boolean isValidAge(Integer age) {
         log.info("register: checking the age...");
         if (age >= 14) {
             log.info("register: age is valid.");
@@ -238,7 +238,7 @@ public class UserService implements UserDetailsService {
         return result;
     }
 
-    public boolean userDataIsValid(ProfileSettingsModel body) {
+    private boolean userDataIsValid(ProfileSettingsModel body) {
         log.info("register: checking user data...");
         boolean result = true;
         if (!isValidAge(body.getAge()))
@@ -297,27 +297,27 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public List<User> getAllByName(String name) {
+    private List<User> getAllByName(String name) {
         return userRepository.findAllByName(name);
     }
 
-    public List<User> getAllBySurname(String surname) {
+    private List<User> getAllBySurname(String surname) {
         return userRepository.findAllBySurname(surname);
     }
 
-    public List<User> getAllByNameAndSurname(String name, String surname) {
+    private List<User> getAllByNameAndSurname(String name, String surname) {
         return userRepository.findAllByNameAndSurname(name, surname);
     }
 
-    public boolean containsByNameAndSurname(String name, String surname) {
+    private boolean containsByNameAndSurname(String name, String surname) {
         return userRepository.existsUserByNameAndSurname(name, surname);
     }
 
-    public boolean containsByName(String name) {
+    private boolean containsByName(String name) {
         return userRepository.existsUserByName(name);
     }
 
-    public boolean containsBySurname(String surname) {
+    private boolean containsBySurname(String surname) {
         return userRepository.existsUserBySurname(surname);
     }
 

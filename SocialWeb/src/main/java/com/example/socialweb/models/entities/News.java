@@ -1,5 +1,6 @@
 package com.example.socialweb.models.entities;
 
+import com.example.socialweb.models.enums.NewsTheme;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.convert.DataSizeUnit;
@@ -17,17 +18,20 @@ public class News {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "politic")
-    private String theme;
     @Column(name = "date")
     private String date;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<User> like;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Comment> comments;
     @Column(name = "description")
     private String description;
     @OneToOne
     private User publisher;
+    @Column(name = "theme")
+    private NewsTheme newsTheme;
     public News(){
+        comments = new ArrayList<>();
         like = new ArrayList<>();
         date = new Date(System.currentTimeMillis()).toString();
     }

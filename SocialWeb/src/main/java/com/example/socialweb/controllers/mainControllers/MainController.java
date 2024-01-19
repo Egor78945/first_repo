@@ -2,10 +2,7 @@ package com.example.socialweb.controllers.mainControllers;
 
 import com.example.socialweb.models.entities.Message;
 import com.example.socialweb.models.entities.User;
-import com.example.socialweb.models.requestModels.MessageBody;
-import com.example.socialweb.models.requestModels.PasswordSettingsModel;
-import com.example.socialweb.models.requestModels.ProfileSettingsModel;
-import com.example.socialweb.models.requestModels.UserSearchModel;
+import com.example.socialweb.models.requestModels.*;
 import com.example.socialweb.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +25,7 @@ public class MainController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final MessageService messageService;
+    private final NewsService newsService;
     private User user;
 
     @RequestMapping
@@ -147,5 +145,35 @@ public class MainController {
         List<Message> list = messageService.getAllBySenderIdAndRecipientId(id, user.getId());
         model.addAttribute("messages", list);
         return "messages_by_user_page";
+    }
+    @GetMapping("/news")
+    public String newsMenu(){
+        return "news_menu_page";
+    }
+    @GetMapping("/news/all")
+    public String news(Model model, Principal principal){
+        model.addAttribute("news", newsService.getAllNews());
+        model.addAttribute("user", userService.getCurrentUser(principal));
+        return "news_page";
+    }
+    @GetMapping("/news/post")
+    public String postNews(Model model){
+        model.addAttribute("model", new PostNewsModel());
+        return "post_news_page";
+    }
+    @PostMapping("/news/post")
+    public String postNews(@ModelAttribute("model") PostNewsModel model, Principal principal){
+        newsService.postNews(model, userService.getCurrentUser(principal));
+        return "redirect:/main/news/all";
+    }
+    @PostMapping("/news/like/{id}")
+    public String like(@PathVariable("id") Long id, Principal principal){
+        newsService.like(newsService.getNewsById(id), userService.getCurrentUser(principal));
+        return "redirect:/main/news/all";
+    }
+    @PostMapping("/news/unlike/{id}")
+    public String unlike(@PathVariable("id") Long id, Principal principal){
+        newsService.unlike(newsService.getNewsById(id), userService.getCurrentUser(principal));
+        return "redirect:/main/news/all";
     }
 }

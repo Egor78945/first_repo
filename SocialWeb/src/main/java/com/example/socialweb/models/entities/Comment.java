@@ -16,16 +16,13 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private News news;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<User> commentator;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<User> likes;
+    @Column(name = "comment")
+    private String comment;
     @Column(name = "date")
     private String date;
     public Comment(){
-        likes = new ArrayList<>();
         date = new Date(System.currentTimeMillis()).toString();
     }
 }
