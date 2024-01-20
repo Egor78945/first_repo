@@ -26,6 +26,7 @@ public class MainController {
     private final PasswordEncoder passwordEncoder;
     private final MessageService messageService;
     private final NewsService newsService;
+    private final CommentService commentService;
     private User user;
 
     @RequestMapping
@@ -174,6 +175,27 @@ public class MainController {
     @PostMapping("/news/unlike/{id}")
     public String unlike(@PathVariable("id") Long id, Principal principal){
         newsService.unlike(newsService.getNewsById(id), userService.getCurrentUser(principal));
+        return "redirect:/main/news/all";
+    }
+    @GetMapping("/news/comment/{id}")
+    public String comment(@PathVariable("id") Long id, Model model){
+        model.addAttribute("comment", new CommentNewsModel(id));
+        return "comment_news_page";
+    }
+    @PostMapping("/news/comment/{id}")
+    public String comment(@PathVariable("id") Long id, @ModelAttribute("comment") CommentNewsModel model, Principal principal){
+        commentService.comment(model, newsService.getNewsById(id), userService.getCurrentUser(principal));
+        return "redirect:/main/news/all";
+    }
+    @GetMapping("/news/comments/{id}")
+    public String comments(@PathVariable("id") Long id, Model model){
+        model.addAttribute("comments", newsService.getNewsById(id).getComments());
+        model.addAttribute("user", user);
+        return "news_comments_page";
+    }
+    @PostMapping("/news/comment/delete/{id}")
+    public String deleteComment(@PathVariable("id") Long id){
+        commentService.deleteComment(commentService.getCommentById(id), user);
         return "redirect:/main/news/all";
     }
 }

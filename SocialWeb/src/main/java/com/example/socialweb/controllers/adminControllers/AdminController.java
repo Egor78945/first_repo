@@ -11,10 +11,5 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 @Slf4j
 public class AdminController {
-    private final UserService userService;
-    private final NewsService newsService;
-    private final ReportService reportService;
-    private final AdminService adminService;
-    private final CommunityService communityService;
 
 }

@@ -18,6 +18,7 @@
         <th>Comment count</th>
         <th>Like</th>
         <th>Comment</th>
+        <th>Comments</th>
     </tr>
     </thead>
     <tbody>
@@ -47,6 +48,11 @@
         <td>
             <form th:action="@{/main/news/comment/{id}(id=${n.getId()})}" method="get">
                 <input type="submit" value="Comment">
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/main/news/comments/{id}(id=${n.getId()})}" method="get">
+                <input type="submit" value="Comments">
             </form>
         </td>
     </tr>

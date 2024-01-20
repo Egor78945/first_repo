@@ -16,13 +16,16 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private News news;
     @Column(name = "comment")
     private String comment;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private User commentator;
     @Column(name = "date")
     private String date;
-    public Comment(){
+
+    public Comment() {
         date = new Date(System.currentTimeMillis()).toString();
     }
 }

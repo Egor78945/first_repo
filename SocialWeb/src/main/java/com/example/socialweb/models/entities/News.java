@@ -8,10 +8,9 @@ import org.springframework.boot.convert.DataSizeUnit;
 import java.util.*;
 
 @Entity
-@Getter
-@Setter
 @AllArgsConstructor
 @EqualsAndHashCode
+@Data
 @Table(name = "news")
 public class News {
     @Id
@@ -34,5 +33,8 @@ public class News {
         comments = new ArrayList<>();
         like = new ArrayList<>();
         date = new Date(System.currentTimeMillis()).toString();
+    }
+    public void comment(Comment comment){
+        comments.add(comment);
     }
 }
