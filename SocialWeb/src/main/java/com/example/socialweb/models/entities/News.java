@@ -25,7 +25,7 @@ public class News {
     private List<Comment> comments;
     @Column(name = "description")
     private String description;
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private User publisher;
     @Column(name = "theme")
     private NewsTheme newsTheme;

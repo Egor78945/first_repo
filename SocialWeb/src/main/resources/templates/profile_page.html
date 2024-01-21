@@ -30,5 +30,57 @@
 <form th:action="@{/main/news}" method="get">
     <input type="submit" value="News menu">
 </form>
+<br>
+<table>
+    <thead>
+    <tr>
+        <th>Theme</th>
+        <th>Description</th>
+        <th>Like count</th>
+        <th>Comment count</th>
+        <th>Like</th>
+        <th>Comment</th>
+        <th>Comments</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${news.isEmpty()}">
+        <td colspan="2">You have not news.</td>
+    </tr>
+    <tr th:each="n : ${news}">
+        <td><span th:text="${n.getNewsTheme().toString()}">Theme</span></td>
+        <td><span th:text="${n.getDescription()}">Description</span></td>
+        <td><span th:text="${n.getLike().size()}">Like count</span></td>
+        <td><span th:text="${n.getComments().size()}">Comment count</span></td>
+        <td>
+            <div th:if="${!n.getLike().contains(user)}">
+                <form th:action="@{/main/news/like/{id}(id=${n.getId()})}" method="post">
+                    <input type="submit" value="Like">
+                </form>
+            </div>
+            <div th:if="${n.getLike().contains(user)}">
+                <form th:action="@{/main/news/unlike/{id}(id=${n.getId()})}" method="post">
+                    <input type="submit" value="Unlike">
+                </form>
+            </div>
+        </td>
+        <td>
+            <form th:action="@{/main/news/comment/{id}(id=${n.getId()})}" method="get">
+                <input type="submit" value="Comment">
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/main/news/comments/{id}(id=${n.getId()})}" method="get">
+                <input type="submit" value="Comments">
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/main/news/delete/{id}(id=${n.getId()})}" method="post">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

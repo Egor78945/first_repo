@@ -55,6 +55,13 @@
                 <input type="submit" value="Comments">
             </form>
         </td>
+        <div th:if="${n.getPublisher().getId().equals(user.getId())}">
+            <td>
+                <form th:action="@{/main/news/delete/{id}(id=${n.getId()})}" method="post">
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
+        </div>
     </tr>
     </tbody>
 </table>

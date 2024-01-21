@@ -10,6 +10,7 @@ import com.example.socialweb.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -22,6 +23,7 @@ public class CommentService {
         return commentRepository.findCommentById(id);
     }
 
+    @Transactional
     public void comment(CommentNewsModel model, News newsById, User currentUser) {
         log.info("comment: attempt to comment the news...");
         if (model.getComment().length() < 100 && !model.getComment().isEmpty()) {
@@ -39,13 +41,13 @@ public class CommentService {
             log.info("comment: comment is invalid.");
         }
     }
-
+    @Transactional
     public void deleteComment(Comment commentById, User user) {
         log.info("comment: attempt to delete the comment.");
         if (commentById.getCommentator().getId().equals(user.getId())) {
-
             News news = commentById.getNews();
             news.getComments().remove(commentById);
+            commentRepository.delete(commentById);
             log.info("comment: comment has been deleted, saving the news.");
             newsRepository.save(news);
             log.info("comment: news has been saved.");

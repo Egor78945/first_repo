@@ -4,11 +4,13 @@ import com.example.socialweb.models.entities.News;
 import com.example.socialweb.models.entities.User;
 import com.example.socialweb.models.enums.NewsTheme;
 import com.example.socialweb.models.requestModels.PostNewsModel;
+import com.example.socialweb.repositories.CommentRepository;
 import com.example.socialweb.repositories.NewsRepository;
 import com.example.socialweb.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ import java.util.List;
 @Slf4j
 public class NewsService {
     private final NewsRepository newsRepository;
+    private final CommentRepository commentRepository;
 
     public List<News> getAllNews() {
         return newsRepository.findAll();
@@ -26,12 +29,16 @@ public class NewsService {
         return newsRepository.findNewsById(id);
     }
 
+    public List<News> getAllByPublisherId(Long id) {
+        return newsRepository.findAllByPublisherId(id);
+    }
+    @Transactional
     public void saveNews(News news) {
         log.info("news: attempt to save the news...");
         newsRepository.save(news);
         log.info("news: news has been saved and published.");
     }
-
+    @Transactional
     public void postNews(PostNewsModel model, User currentUser) {
         if (isValidNews(model)) {
             log.info("news: creating the news...");
@@ -63,7 +70,7 @@ public class NewsService {
         }
 
     }
-
+    @Transactional
     public void like(News newsById, User user) {
         log.info("news: attempt to like news...");
         if (!newsById.getLike().contains(user)) {
@@ -74,7 +81,7 @@ public class NewsService {
             log.info("news: user is already liked this news.");
         }
     }
-
+    @Transactional
     public void unlike(News newsById, User user) {
         log.info("news: attempt to unlike news...");
         if (newsById.getLike().contains(user)) {
@@ -83,6 +90,20 @@ public class NewsService {
             saveNews(newsById);
         } else {
             log.info("news: user is not liked the news.");
+        }
+    }
+
+    @Transactional
+    public void deleteNews(News newsById, User user) {
+        log.info("news: attempt to delete the news...");
+        if (newsById.getPublisher().getId().equals(user.getId())) {
+            log.info("news: attempt to delete all comments by news...");
+            commentRepository.deleteAllByNewsId(newsById.getId());
+            log.info("news: all comments by news " + newsById.getId() + " has been deleted.");
+            newsRepository.delete(newsById);
+            log.info("news: news has been deleted.");
+        } else {
+            log.info("news: User cant delete other user news.");
         }
     }
 }

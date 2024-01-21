@@ -39,6 +39,7 @@ public class MainController {
         if (user == null)
             user = userService.getCurrentUser(principal);
         model.addAttribute("user", user);
+        model.addAttribute("news", newsService.getAllByPublisherId(user.getId()));
         return "profile_page";
     }
 
@@ -197,5 +198,10 @@ public class MainController {
     public String deleteComment(@PathVariable("id") Long id){
         commentService.deleteComment(commentService.getCommentById(id), user);
         return "redirect:/main/news/all";
+    }
+    @PostMapping("/news/delete/{id}")
+    public String deleteNews(@PathVariable("id") Long id){
+        newsService.deleteNews(newsService.getNewsById(id), user);
+        return "redirect:/main/profile";
     }
 }
