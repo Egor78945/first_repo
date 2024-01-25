@@ -19,7 +19,7 @@ public class BanDetails {
     private String date;
     @Column(name = "reason")
     private String reason;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private User user;
     @OneToOne
     private User banned;

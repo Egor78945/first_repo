@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Profile</title>
@@ -11,6 +11,11 @@
 <h1 th:text="'Country: ' + ${user.getCountry()}"/>
 <h1 th:text="'City: ' + ${user.getCity()}"/>
 <h1 th:text="'Age: ' + ${user.getAge()}"/><br>
+<div sec:authorize="hasAuthority('ADMIN_ROLE')">
+    <form th:action="@{/admin/panel}" method="get">
+        <input type="submit" value="Admin panel">
+    </form>
+    <br>
 <form th:action="@{/main/settings}" method="get">
     <input type="submit" value="Settings">
 </form>
