@@ -19,9 +19,9 @@ public class BanDetails {
     private String date;
     @Column(name = "reason")
     private String reason;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private User user;
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private User banned;
     public BanDetails(){
         date = new Date(System.currentTimeMillis()).toString();

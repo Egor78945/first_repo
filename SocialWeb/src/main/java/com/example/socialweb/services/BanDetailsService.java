@@ -2,6 +2,7 @@ package com.example.socialweb.services;
 
 import com.example.socialweb.models.entities.BanDetails;
 import com.example.socialweb.models.entities.User;
+import com.example.socialweb.models.requestModels.BanUserModel;
 import com.example.socialweb.repositories.BanDetailsRepository;
 import com.example.socialweb.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +28,9 @@ public class BanDetailsService {
     @Transactional
     public void unban(Long id) {
         log.info("admin: attempt to unban user...");
-        BanDetails banDetails = getBanDetailsById(id);
-        User user = userRepository.findUserById(banDetails.getUser().getId());
-        if (!user.getIsBan()) {
+        BanDetails banDetails = getBanDetailsByUserId(id);
+        User user = userRepository.findUserById(id);
+        if (user.getIsBan()) {
             log.info("admin: attempt to unban user...");
             user.setIsBan(false);
             log.info("admin: attempt to delete ban details...");
@@ -42,4 +43,23 @@ public class BanDetailsService {
         }
     }
 
+    @Transactional
+    public void ban(User userToBan, User banned, BanUserModel model) {
+        log.info("admin: Attempt to ban user...");
+        if(!userToBan.getIsBan()){
+            userToBan.setIsBan(true);
+            log.info("admin: user has been banned, creating ban details...");
+            BanDetails banDetails = new BanDetails();
+            banDetails.setBanned(banned);
+            banDetails.setUser(userToBan);
+            banDetails.setReason(model.getReason());
+            log.info("admin: user details created, saving ban details and user...");
+            userRepository.save(userToBan);
+            log.info("admin: user has been saved.");
+            banDetailsRepository.save(banDetails);
+            log.info("admin: ban details has been saved.");
+        } else {
+            log.info("admin: user is already banned.");
+        }
+    }
 }

@@ -12,7 +12,7 @@
 <b th:text="'Surname: ' + ${banDetails.getUser().getSurname()}"/><br>
 <b th:text="'Reason: ' + ${banDetails.getReason()}"/><br>
 <b th:text="'Date: ' + ${banDetails.getDate()}"/><br>
-<form th:action="@{/admin/user/unban/{id}(id=${banDetails.getId()})}" method="post">
+<form th:action="@{/admin/user/unban/{id}(id=${banDetails.getUser().getId()})}" method="post">
     <input type="submit" value="Unban">
 </form>
 <br>

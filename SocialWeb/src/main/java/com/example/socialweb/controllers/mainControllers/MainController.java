@@ -45,7 +45,7 @@ public class MainController {
 
     @GetMapping("/profile/{id}")
     public String profile(@PathVariable("id") Long id, Model model, Principal principal) {
-        if (!user.getId().equals(id)) {
+        if (!user.getId().equals(id) && !user.getIsBan()) {
             model.addAttribute("user_profile", userService.getUserById(id));
             model.addAttribute("user", userService.getCurrentUser(principal));
             return "search_user_profile_page";
@@ -55,18 +55,24 @@ public class MainController {
 
     @GetMapping("/settings")
     public String settings() {
-        return "settings_page";
+        if (!user.getIsBan())
+            return "settings_page";
+        else
+            return "redirect:/main/profile";
     }
 
     @GetMapping("/settings/password")
     public String password(Model model) {
-        model.addAttribute("password", new PasswordSettingsModel());
-        return "password_settings_page";
+        if (!user.getIsBan()) {
+            model.addAttribute("password", new PasswordSettingsModel());
+            return "password_settings_page";
+        } else
+            return "redirect:/main/profile";
     }
 
     @PostMapping("/settings/password")
     public String password(@ModelAttribute("password") PasswordSettingsModel model) {
-        if (userService.changePassword(model, user, passwordEncoder))
+        if (userService.changePassword(model, user, passwordEncoder) || user.getIsBan())
             return "redirect:/main/profile";
         else
             return "redirect:/main/settings";
@@ -74,14 +80,17 @@ public class MainController {
 
     @GetMapping("/settings/profile")
     public String profile(Model model) {
-        ProfileSettingsModel profileModel = new ProfileSettingsModel();
-        model.addAttribute("profile", profileModel.build(user));
-        return "profile_settings_page";
+        if (!user.getIsBan()) {
+            ProfileSettingsModel profileModel = new ProfileSettingsModel();
+            model.addAttribute("profile", profileModel.build(user));
+            return "profile_settings_page";
+        } else
+            return "redirect:/main/profile";
     }
 
     @PostMapping("/settings/profile")
     public String profile(@ModelAttribute("profile") ProfileSettingsModel model) {
-        if (userService.updateProfile(model, user))
+        if (userService.updateProfile(model, user) || user.getIsBan())
             return "redirect:/main/profile";
         else
             return "redirect:/main/settings";
@@ -89,119 +98,186 @@ public class MainController {
 
     @GetMapping("/user/search")
     public String userSearch(Model model) {
-        model.addAttribute("search", new UserSearchModel());
-        return "search_user_page";
+        if (!user.getIsBan()) {
+            model.addAttribute("search", new UserSearchModel());
+            return "search_user_page";
+        } else
+            return "redirect:/main/profile";
     }
 
     @PostMapping("/user/search")
     public String userSearch(@ModelAttribute("search") UserSearchModel searchModel, Model model) {
-        List<User> users = null;
-        try {
-            users = userService.search(searchModel);
-            model.addAttribute("users", users);
-            return "search_user_result_page";
-        } catch (Exception e) {
-            log.info(e.getMessage());
-            return "redirect:/main/user/search";
-        }
+        if (!user.getIsBan()) {
+            List<User> users = null;
+            try {
+                users = userService.search(searchModel);
+                model.addAttribute("users", users);
+                return "search_user_result_page";
+            } catch (Exception e) {
+                log.info(e.getMessage());
+                return "redirect:/main/user/search";
+            }
+        } else
+            return "redirect:/main/profile";
     }
 
     @GetMapping("/user/friends")
     public String userFriends(Model model) {
-        model.addAttribute("friends", user.getFriends());
-        return "user_friends_page";
+        if (!user.getIsBan()) {
+            model.addAttribute("friends", user.getFriends());
+            return "user_friends_page";
+        } else
+            return "redirect:/main/profile";
     }
 
     @PostMapping("/user/friends/add/{id}")
     public String addFriend(@PathVariable("id") Long id, Principal principal) {
-        userService.addFriend(userService.getCurrentUser(principal), userService.getUserById(id));
-        user = null;
+        if (!user.getIsBan()) {
+            userService.addFriend(userService.getCurrentUser(principal), userService.getUserById(id));
+            user = null;
+        }
         return "redirect:/main/profile";
     }
 
     @PostMapping("/user/friends/remove/{id}")
     public String removeFriend(@PathVariable("id") Long id, Principal principal) {
-        userService.removeFriend(userService.getCurrentUser(principal), userService.getUserById(id));
-        user = null;
+        if (!user.getIsBan()) {
+            userService.removeFriend(userService.getCurrentUser(principal), userService.getUserById(id));
+            user = null;
+        }
         return "redirect:/main/profile";
     }
 
     @GetMapping("/message/send/{id}")
     public String messageTo(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("message", new MessageBody(id));
-        return "message_to_page";
+        if (!user.getIsBan()) {
+            model.addAttribute("message", new MessageBody(id));
+            return "message_to_page";
+        } else
+            return "redirect:/main/profile";
     }
 
     @PostMapping("/message/send/{id}")
     public String messageTo(@PathVariable("id") Long id, @ModelAttribute("message") MessageBody body, Principal principal) {
-        messageService.sendMessageTo(body, userService.getCurrentUser(principal), id);
+        if (!user.getIsBan())
+            messageService.sendMessageTo(body, userService.getCurrentUser(principal), id);
         return "redirect:/main/profile";
     }
+
     @GetMapping("/messages")
-    public String messages(Model model){
-        model.addAttribute("messages", user.getMessages());
-        return "messages_page";
+    public String messages(Model model) {
+        if (!user.getIsBan()) {
+            model.addAttribute("messages", user.getMessages());
+            return "messages_page";
+        } else
+            return "redirect:/main/profile";
     }
+
     @GetMapping("/messages/{id}")
-    public String messages(@PathVariable("id") Long id, Model model){
-        List<Message> list = messageService.getAllBySenderIdAndRecipientId(id, user.getId());
-        model.addAttribute("messages", list);
-        return "messages_by_user_page";
+    public String messages(@PathVariable("id") Long id, Model model) {
+        if (!user.getIsBan()) {
+            List<Message> list = messageService.getAllBySenderIdAndRecipientId(id, user.getId());
+            model.addAttribute("messages", list);
+            return "messages_by_user_page";
+        } else
+            return "redirect:/main/profile";
     }
+
     @GetMapping("/news")
-    public String newsMenu(){
-        return "news_menu_page";
+    public String newsMenu() {
+        if (!user.getIsBan())
+            return "news_menu_page";
+        else
+            return "redirect:/main/profile";
     }
+
     @GetMapping("/news/all")
-    public String news(Model model, Principal principal){
-        model.addAttribute("news", newsService.getAllNews());
-        model.addAttribute("user", userService.getCurrentUser(principal));
-        return "news_page";
+    public String news(Model model, Principal principal) {
+        if (!user.getIsBan()) {
+            model.addAttribute("news", newsService.getAllNews());
+            model.addAttribute("user", userService.getCurrentUser(principal));
+            return "news_page";
+        } else
+            return "redirect:/main/profile";
     }
+
     @GetMapping("/news/post")
-    public String postNews(Model model){
-        model.addAttribute("model", new PostNewsModel());
-        return "post_news_page";
+    public String postNews(Model model) {
+        if (!user.getIsBan()) {
+            model.addAttribute("model", new PostNewsModel());
+            return "post_news_page";
+        } else
+            return "redirect:/main/profile";
     }
+
     @PostMapping("/news/post")
-    public String postNews(@ModelAttribute("model") PostNewsModel model, Principal principal){
-        newsService.postNews(model, userService.getCurrentUser(principal));
-        return "redirect:/main/news/all";
+    public String postNews(@ModelAttribute("model") PostNewsModel model, Principal principal) {
+        if (!user.getIsBan()) {
+            newsService.postNews(model, userService.getCurrentUser(principal));
+            return "redirect:/main/news/all";
+        } else
+            return "redirect:/main/profile";
     }
+
     @PostMapping("/news/like/{id}")
-    public String like(@PathVariable("id") Long id, Principal principal){
-        newsService.like(newsService.getNewsById(id), userService.getCurrentUser(principal));
-        return "redirect:/main/news/all";
+    public String like(@PathVariable("id") Long id, Principal principal) {
+        if (!user.getIsBan()) {
+            newsService.like(newsService.getNewsById(id), userService.getCurrentUser(principal));
+            return "redirect:/main/news/all";
+        } else
+            return "redirect:/main/profile";
     }
+
     @PostMapping("/news/unlike/{id}")
-    public String unlike(@PathVariable("id") Long id, Principal principal){
-        newsService.unlike(newsService.getNewsById(id), userService.getCurrentUser(principal));
-        return "redirect:/main/news/all";
+    public String unlike(@PathVariable("id") Long id, Principal principal) {
+        if (!user.getIsBan()) {
+            newsService.unlike(newsService.getNewsById(id), userService.getCurrentUser(principal));
+            return "redirect:/main/news/all";
+        } else
+            return "redirect:/main/profile";
     }
+
     @GetMapping("/news/comment/{id}")
-    public String comment(@PathVariable("id") Long id, Model model){
-        model.addAttribute("comment", new CommentNewsModel(id));
-        return "comment_news_page";
+    public String comment(@PathVariable("id") Long id, Model model) {
+        if (!user.getIsBan()) {
+            model.addAttribute("comment", new CommentNewsModel(id));
+            return "comment_news_page";
+        } else
+            return "redirect:/main/profile";
     }
+
     @PostMapping("/news/comment/{id}")
-    public String comment(@PathVariable("id") Long id, @ModelAttribute("comment") CommentNewsModel model, Principal principal){
-        commentService.comment(model, newsService.getNewsById(id), userService.getCurrentUser(principal));
-        return "redirect:/main/news/all";
+    public String comment(@PathVariable("id") Long id, @ModelAttribute("comment") CommentNewsModel model, Principal principal) {
+        if (!user.getIsBan()) {
+            commentService.comment(model, newsService.getNewsById(id), userService.getCurrentUser(principal));
+            return "redirect:/main/news/all";
+        } else
+            return "redirect:/main/profile";
     }
+
     @GetMapping("/news/comments/{id}")
-    public String comments(@PathVariable("id") Long id, Model model){
-        model.addAttribute("comments", newsService.getNewsById(id).getComments());
-        model.addAttribute("user", user);
-        return "news_comments_page";
+    public String comments(@PathVariable("id") Long id, Model model) {
+        if (!user.getIsBan()) {
+            model.addAttribute("comments", newsService.getNewsById(id).getComments());
+            model.addAttribute("user", user);
+            return "news_comments_page";
+        } else
+            return "redirect:/main/profile";
     }
+
     @PostMapping("/news/comment/delete/{id}")
-    public String deleteComment(@PathVariable("id") Long id){
-        commentService.deleteComment(commentService.getCommentById(id), user);
-        return "redirect:/main/news/all";
+    public String deleteComment(@PathVariable("id") Long id) {
+        if (!user.getIsBan()) {
+            commentService.deleteComment(commentService.getCommentById(id), user);
+            return "redirect:/main/news/all";
+        } else
+            return "redirect:/main/profile";
     }
+
     @PostMapping("/news/delete/{id}")
-    public String deleteNews(@PathVariable("id") Long id){
-        newsService.deleteNews(newsService.getNewsById(id), user);
+    public String deleteNews(@PathVariable("id") Long id) {
+        if (!user.getIsBan())
+            newsService.deleteNews(newsService.getNewsById(id), user);
         return "redirect:/main/profile";
     }
 }
