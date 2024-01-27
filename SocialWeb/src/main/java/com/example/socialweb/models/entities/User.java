@@ -119,4 +119,10 @@ public class User {
     public int hashCode() {
         return Objects.hash(getId(), getName(), getSurname(), getStatus(), getEmail(), getCommunities(), getAge(), getCity(), getRole(), getCountry(), getPassword(), getRegisterDate(), getFriends(), getIsBan(), getIsLock(), getCloseProfile());
     }
+    public boolean isUser(){
+        return role.equals(Role.USER_ROLE);
+    }
+    public boolean isAdmin(){
+        return role.equals(Role.ADMIN_ROLE);
+    }
 }

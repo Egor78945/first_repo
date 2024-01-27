@@ -1,13 +1,14 @@
 package com.example.socialweb.models.entities;
 
+import com.example.socialweb.models.enums.ReportReason;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "reports")
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
 @EqualsAndHashCode
 public class Report {
@@ -16,17 +17,20 @@ public class Report {
     @Column(name = "id")
     private Long id;
     @Column(name = "theme")
-    private String reason;
+    private ReportReason reason;
     @Column(name = "message")
     private String message;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private User applicant;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private User appealed;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private News news;
     @OneToOne(cascade = CascadeType.ALL)
     private Community community;
     @Column(name = "date")
     private String date;
+    public Report(){
+        date = new Date(System.currentTimeMillis()).toString();
+    }
 }

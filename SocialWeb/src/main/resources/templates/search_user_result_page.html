@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Result</title>
@@ -16,6 +16,10 @@
         <th>Country</th>
         <th>City</th>
         <th>Profile</th>
+        <th>Report</th>
+        <div sec:authorize="hasAuthority('ADMIN_ROLE')">
+            <th>Ban</th>
+        </div>
     </tr>
     </thead>
     <tbody>
@@ -31,6 +35,25 @@
                 <input type="submit" value="Profile">
             </form>
         </td>
+        <td>
+            <form th:action="@{/main/user/report/{id}(id=${u.getId()})}" method="get">
+                <input type="submit" value="Report">
+            </form>
+        </td>
+        <div sec:authorize="hasAuthority('ADMIN_ROLE')">
+            <td>
+                <div th:if="${u.getIsBan()}">
+                    <form th:action="@{/admin/user/unban/{id}(id=${u.getId()})}" method="post">
+                        <input type="submit" value="Unban">
+                    </form>
+                </div>
+                <div th:if="${!u.getIsBan()}">
+                    <form th:action="@{/admin/user/ban/{id}(id=${u.getId()})}" method="get">
+                        <input type="submit" value="Ban">
+                    </form>
+                </div>
+            </td>
+        </div>
     </tr>
     </tbody>
 </table>

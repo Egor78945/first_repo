@@ -19,6 +19,7 @@
         <th>Like</th>
         <th>Comment</th>
         <th>Comments</th>
+        <th>Profile</th>
     </tr>
     </thead>
     <tbody>
@@ -55,7 +56,12 @@
                 <input type="submit" value="Comments">
             </form>
         </td>
-        <div th:if="${n.getPublisher().getId().equals(user.getId())}">
+        <td>
+            <form th:action="@{/main/profile/{id}(id=${n.getPublisher().getId()})}" method="get">
+                <input type="submit" value="Profile">
+            </form>
+        </td>
+        <div th:if="${n.getPublisher().getId().equals(user.getId()) || user.isAdmin()}">
             <td>
                 <form th:action="@{/main/news/delete/{id}(id=${n.getId()})}" method="post">
                     <input type="submit" value="Delete">

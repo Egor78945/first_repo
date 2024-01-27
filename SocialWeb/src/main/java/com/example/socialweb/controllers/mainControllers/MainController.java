@@ -27,6 +27,7 @@ public class MainController {
     private final MessageService messageService;
     private final NewsService newsService;
     private final CommentService commentService;
+    private final ReportService reportService;
     private User user;
 
     @RequestMapping
@@ -278,6 +279,19 @@ public class MainController {
     public String deleteNews(@PathVariable("id") Long id) {
         if (!user.getIsBan())
             newsService.deleteNews(newsService.getNewsById(id), user);
+        return "redirect:/main/profile";
+    }
+
+    @GetMapping("/user/report/{id}")
+    public String reportUser(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("report", new ReportModel(id));
+        return "report_page";
+    }
+
+    @PostMapping("/user/report/{id}")
+    public String reportUser(@PathVariable("id") Long id, @ModelAttribute("report") ReportModel reportModel, Principal principal) {
+        if (!user.getIsBan())
+            reportService.reportUser(userService.getUserById(id), reportModel, userService.getCurrentUser(principal));
         return "redirect:/main/profile";
     }
 }

@@ -19,6 +19,7 @@ import java.security.Principal;
 public class AdminController {
     private final UserService userService;
     private final BanDetailsService banDetailsService;
+    private final ReportService reportService;
     private static User user;
 
     @GetMapping("/panel")
@@ -79,5 +80,11 @@ public class AdminController {
             return "redirect:/admin/panel";
         } else
             return "redirect:/main/profile";
+    }
+
+    @GetMapping("/user/reports")
+    public String reportedUsers(Model model) {
+        model.addAttribute("reports", reportService.getAllReportedUsers());
+        return "reported_users_page";
     }
 }

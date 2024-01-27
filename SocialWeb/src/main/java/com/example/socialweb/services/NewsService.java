@@ -3,6 +3,7 @@ package com.example.socialweb.services;
 import com.example.socialweb.models.entities.News;
 import com.example.socialweb.models.entities.User;
 import com.example.socialweb.models.enums.NewsTheme;
+import com.example.socialweb.models.enums.Role;
 import com.example.socialweb.models.requestModels.PostNewsModel;
 import com.example.socialweb.repositories.CommentRepository;
 import com.example.socialweb.repositories.NewsRepository;
@@ -32,12 +33,14 @@ public class NewsService {
     public List<News> getAllByPublisherId(Long id) {
         return newsRepository.findAllByPublisherId(id);
     }
+
     @Transactional
     public void saveNews(News news) {
         log.info("news: attempt to save the news...");
         newsRepository.save(news);
         log.info("news: news has been saved and published.");
     }
+
     @Transactional
     public void postNews(PostNewsModel model, User currentUser) {
         if (isValidNews(model)) {
@@ -70,6 +73,7 @@ public class NewsService {
         }
 
     }
+
     @Transactional
     public void like(News newsById, User user) {
         log.info("news: attempt to like news...");
@@ -81,6 +85,7 @@ public class NewsService {
             log.info("news: user is already liked this news.");
         }
     }
+
     @Transactional
     public void unlike(News newsById, User user) {
         log.info("news: attempt to unlike news...");
@@ -96,7 +101,7 @@ public class NewsService {
     @Transactional
     public void deleteNews(News newsById, User user) {
         log.info("news: attempt to delete the news...");
-        if (newsById.getPublisher().getId().equals(user.getId())) {
+        if (newsById.getPublisher().getId().equals(user.getId()) || user.isAdmin()) {
             log.info("news: attempt to delete all comments by news...");
             commentRepository.deleteAllByNewsId(newsById.getId());
             log.info("news: all comments by news " + newsById.getId() + " has been deleted.");
