@@ -1,6 +1,7 @@
 package com.example.socialweb.models.entities;
 
 import com.example.socialweb.models.enums.CommunityMode;
+import com.example.socialweb.models.enums.CommunityTheme;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,13 +23,17 @@ public class Community {
     private String name;
     @Column(name = "description")
     private String description;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private User owner;
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<User> subscribers;
     @Column(name = "mode")
     private CommunityMode mode;
+    @Column(name = "theme")
+    private CommunityTheme theme;
     public Community(){
         subscribers = new ArrayList<>();
+        mode = CommunityMode.PUBLIC_MODE;
+        theme = CommunityTheme.OTHER_THEME;
     }
 }

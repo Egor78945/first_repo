@@ -1,14 +1,12 @@
 package com.example.socialweb.controllers.mainControllers;
 
+import com.example.socialweb.models.entities.Community;
 import com.example.socialweb.models.entities.Message;
 import com.example.socialweb.models.entities.User;
 import com.example.socialweb.models.requestModels.*;
 import com.example.socialweb.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +26,9 @@ public class MainController {
     private final NewsService newsService;
     private final CommentService commentService;
     private final ReportService reportService;
+    private final CommunityService communityService;
     private User user;
+    private List<Community> ownCommunities;
 
     @RequestMapping
     public String mainPage() {
@@ -37,8 +37,10 @@ public class MainController {
 
     @GetMapping("/profile")
     public String profile(Principal principal, Model model) {
-        if (user == null)
+        if (user == null) {
             user = userService.getCurrentUser(principal);
+            ownCommunities = communityService.getAllCommunitiesByOwner(user);
+        }
         model.addAttribute("user", user);
         model.addAttribute("news", newsService.getAllByPublisherId(user.getId()));
         return "profile_page";
@@ -284,8 +286,11 @@ public class MainController {
 
     @GetMapping("/user/report/{id}")
     public String reportUser(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("report", new ReportModel(id));
-        return "report_page";
+        if (!user.getIsBan()) {
+            model.addAttribute("report", new ReportModel(id));
+            return "report_page";
+        }
+        return "redirect:/main/profile";
     }
 
     @PostMapping("/user/report/{id}")
@@ -293,5 +298,37 @@ public class MainController {
         if (!user.getIsBan())
             reportService.reportUser(userService.getUserById(id), reportModel, userService.getCurrentUser(principal));
         return "redirect:/main/profile";
+    }
+
+    @GetMapping("/community/menu")
+    public String commMenu(Model model) {
+        if (!user.getIsBan()) {
+            model.addAttribute("userComms", ownCommunities);
+            return "community_menu_page";
+        }
+        return "redirect:/main/profile";
+    }
+
+    @GetMapping("/community/create")
+    public String createComm(Model model) {
+        if (!user.getIsBan() && ownCommunities.size() < 3) {
+            model.addAttribute("commModel", new CommunityModel());
+            return "create_community_page";
+        }
+        return "redirect:/main/profile";
+    }
+
+    @PostMapping("/community/create")
+    public String createComm(@ModelAttribute("commModel") CommunityModel communityModel, Principal principal) {
+        if (!user.getIsBan() && communityService.createCommunity(communityModel, userService.getCurrentUser(principal), ownCommunities)) {
+            ownCommunities = communityService.getAllCommunitiesByOwner(userService.getCurrentUser(principal));
+            return "redirect:/main/community/menu";
+        } else
+            return "redirect:/main/profile";
+    }
+    @GetMapping("/community/my")
+    public String ownCommunities(Model model){
+        model.addAttribute("communities", communityService.getAllCommunitiesByOwner(user));
+        return "own_communities_page";
     }
 }
