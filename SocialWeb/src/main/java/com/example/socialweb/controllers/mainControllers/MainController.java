@@ -301,9 +301,10 @@ public class MainController {
     }
 
     @GetMapping("/community/menu")
-    public String commMenu(Model model) {
+    public String commMenu(Model model, Principal principal) {
         if (!user.getIsBan()) {
-            model.addAttribute("userComms", ownCommunities);
+            model.addAttribute("userComms", userService.getCurrentUser(principal).getCommunities());
+            model.addAttribute("userOwnComms", ownCommunities);
             return "community_menu_page";
         }
         return "redirect:/main/profile";
@@ -322,13 +323,65 @@ public class MainController {
     public String createComm(@ModelAttribute("commModel") CommunityModel communityModel, Principal principal) {
         if (!user.getIsBan() && communityService.createCommunity(communityModel, userService.getCurrentUser(principal), ownCommunities)) {
             ownCommunities = communityService.getAllCommunitiesByOwner(userService.getCurrentUser(principal));
-            return "redirect:/main/community/menu";
+            return "redirect:/main/community/my";
         } else
             return "redirect:/main/profile";
     }
+
+    @GetMapping("/community/my/own")
+    public String ownCommunities(Model model, Principal principal) {
+        if (!user.getIsBan()) {
+            User user = userService.getCurrentUser(principal);
+            model.addAttribute("communities", communityService.getAllCommunitiesByOwner(user));
+            model.addAttribute("user", user);
+            return "my_communities_page";
+        }
+        return "redirect:/main/profile";
+    }
+
     @GetMapping("/community/my")
-    public String ownCommunities(Model model){
-        model.addAttribute("communities", communityService.getAllCommunitiesByOwner(user));
-        return "own_communities_page";
+    public String myCommunities(Model model, Principal principal) {
+        if (!user.getIsBan()) {
+            model.addAttribute("communities", userService.getCurrentUser(principal).getCommunities());
+            model.addAttribute("user", user);
+            return "my_communities_page";
+        }
+        return "redirect:/main/profile";
+    }
+
+    @GetMapping("/community/{id}")
+    public String communityProfile(@PathVariable("id") Long id, Model model, Principal principal) {
+        if (!user.getIsBan()) {
+            User user = userService.getCurrentUser(principal);
+            model.addAttribute("community", communityService.getCommunityById(id));
+            model.addAttribute("user", user);
+            return "community_profile_page";
+        }
+        return "redirect:/main/profile";
+    }
+
+    @PostMapping("/community/subscribe/{id}")
+    public String subscribe(@PathVariable("id") Long id, Principal principal) {
+        if (!user.getIsBan() && communityService.subscribe(communityService.getCommunityById(id), userService.getCurrentUser(principal)))
+            return "redirect:/main/community/my";
+        else
+            return "redirect:/main/community/menu";
+    }
+
+    @PostMapping("/community/unsubscribe/{id}")
+    public String unsubscribe(@PathVariable("id") Long id, Principal principal) {
+        if (!user.getIsBan() && communityService.unsubscribe(communityService.getCommunityById(id), userService.getCurrentUser(principal)))
+            return "redirect:/main/community/my";
+        else
+            return "redirect:/main/community/menu";
+    }
+
+    @GetMapping("/main/community/all")
+    public String community(Model model) {
+        if (!user.getIsBan()) {
+            model.addAttribute("communities", communityService.getAllCommunities());
+            return "all_communities_page";
+        }
+        return "redirect:/main/profile";
     }
 }

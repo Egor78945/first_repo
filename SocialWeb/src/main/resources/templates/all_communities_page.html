@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My own communities</title>
+    <title>All communities</title>
 </head>
 <body>
-<h1>My own communities</h1>
-<br>
+<h1>All communities</h1>
 <table>
     <thead>
     <tr>
@@ -17,12 +16,17 @@
     </thead>
     <tbody>
     <tr th:if="${communities.isEmpty()}">
-        <td colspan="2">You have not your own communities.</td>
+        <td colspan="2">There is no any news.</td>
     </tr>
     <tr th:each="c : ${communities}">
         <td><span th:text="${c.getId()}">Id</span></td>
         <td><span th:text="${c.getName()}">Name</span></td>
         <td><span th:text="${c.getSubscribers().size()}">Subscribers count</span></td>
+        <td>
+            <form th:action="@{/main/community/{id}(id=${c.getId()})}" method="get">
+                <input type="submit" value="Community profile">
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>

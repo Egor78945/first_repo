@@ -18,10 +18,16 @@
 <form th:action="@{/main/community/theme}" method="get">
     <input type="submit" value="Get community by theme">
 </form>
-<div th:if="${userComms.size() < 3}">
+<div th:if="${userOwnComms.size() < 3}">
     <br>
     <form th:action="@{/main/community/create}" method="get">
         <input type="submit" value="Create community">
+    </form>
+</div>
+<div th:if="${userOwnComms.size() > 0}">
+    <br>
+    <form th:action="@{/main/community/my/own}" method="get">
+        <input type="submit" value="My own communities">
     </form>
 </div>
 <div th:if="${userComms.size() > 0}">

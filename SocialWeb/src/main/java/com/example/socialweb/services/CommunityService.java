@@ -79,13 +79,56 @@ public class CommunityService {
             community.setOwner(currentUser);
             community.setMode(communityModel.getMode());
             community.setTheme(communityModel.getTheme());
-            log.info("community: attempt to save the community...");
+            community.getSubscribers().add(currentUser);
+            currentUser.getCommunities().add(community);
+            log.info("community: attempt to save the community and user...");
             communityRepository.save(community);
             log.info("community: community has been saved.");
+            userRepository.save(currentUser);
+            log.info("community: user has been saved.");
             return true;
         } else
             log.info("community: community is not created.");
         return false;
     }
+    public Community getCommunityById(Long id){
+        return communityRepository.findCommunityById(id);
+    }
 
+    @Transactional
+    public boolean subscribe(Community community, User user) {
+        log.info("community: attempt to subscribe user to community...");
+        if(!community.getSubscribers().contains(user) && !user.getCommunities().contains(community)){
+            user.getCommunities().add(community);
+            community.getSubscribers().add(user);
+            log.info("community: attempt to save the user and community...");
+            userRepository.save(user);
+            log.info("community: user has been saved.");
+            communityRepository.save(community);
+            log.info("community: community has been saved.");
+            return true;
+        }
+        log.info("community: this user is already subscribed on this community.");
+        return false;
+    }
+
+    @Transactional
+    public boolean unsubscribe(Community community, User user) {
+        log.info("community: attempt to unsubscribe user from community...");
+        if(community.getSubscribers().contains(user) && user.getCommunities().contains(community)){
+            user.getCommunities().remove(community);
+            community.getSubscribers().remove(user);
+            log.info("community: attempt to save the user and community...");
+            userRepository.save(user);
+            log.info("community: user has been saved.");
+            communityRepository.save(community);
+            log.info("community: community has been saved.");
+            return true;
+        }
+        log.info("community: this user is not subscribed on this community.");
+        return false;
+    }
+    public List<Community> getAllCommunities(){
+        return communityRepository.findAll();
+    }
 }

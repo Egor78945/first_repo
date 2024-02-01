@@ -4,13 +4,8 @@ package com.example.socialweb.models.entities;
 import com.example.socialweb.models.enums.Role;
 import com.example.socialweb.models.requestModels.ProfileSettingsModel;
 import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 
