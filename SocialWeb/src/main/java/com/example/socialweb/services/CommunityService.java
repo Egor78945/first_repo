@@ -35,15 +35,9 @@ public class CommunityService {
 
     private boolean isValidName(String name) {
         log.info("community: checking name...");
-        if (name.length() < 3 || name.length() > 20) {
+        if (name.length() < 3 || name.length() > 30) {
             log.info("community: name is too long or too short.");
             return false;
-        }
-        for (int i = 0; i < name.length(); i++) {
-            if (!Character.isDigit(name.charAt(i)) && !Character.isLetter(name.charAt(i)) && name.charAt(i) != ' ') {
-                log.info("community: name contains invalid symbols.");
-                return false;
-            }
         }
         log.info("community: name is valid.");
         return true;
@@ -51,7 +45,7 @@ public class CommunityService {
 
     private boolean isValidDescription(String description) {
         log.info("community: checking description...");
-        if (description.length() > 30) {
+        if (description.length() > 50) {
             log.info("community: description is too long.");
             return false;
         }
@@ -128,6 +122,7 @@ public class CommunityService {
         log.info("community: this user is not subscribed on this community.");
         return false;
     }
+    @Transactional
     public List<Community> getAllCommunities(){
         return communityRepository.findAll();
     }

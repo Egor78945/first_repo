@@ -6,7 +6,8 @@
 </head>
 <body>
 <h1>Post news</h1>
-<form th:action="@{/news/user/post}" method="post" th:object="${model}">
+<br>
+<form th:action="@{/news/community/post/{id}(id=${model.getCommunityId()})}" method="post" th:object="${model}">
     Theme:
     <br>
     Politic: <input type="radio" value="POLITIC_THEME" th:field="*{newsTheme}"><br>

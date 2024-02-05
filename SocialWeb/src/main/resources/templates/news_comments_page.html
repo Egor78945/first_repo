@@ -32,7 +32,7 @@
         </td>
         <div th:if="${c.getCommentator().getId().equals(user.getId())}">
             <td>
-                <form th:action="@{/main/news/comment/delete/{id}(id=${c.getId()})}" method="post">
+                <form th:action="@{/news/comment/delete/{id}(id=${c.getId()})}" method="post">
                     <input type="submit" value="Delete">
                 </form>
             </td>
@@ -41,7 +41,7 @@
     </tbody>
 </table>
 <br>
-<form th:action="@{/main/news}" method="get">
+<form th:action="@{/news/menu}" method="get">
     <input type="submit" value="Back to news menu">
 </form>
 <br>

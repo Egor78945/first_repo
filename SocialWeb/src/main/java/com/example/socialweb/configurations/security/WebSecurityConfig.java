@@ -1,5 +1,6 @@
 package com.example.socialweb.configurations.security;
 
+import com.example.socialweb.models.entities.User;
 import com.example.socialweb.models.enums.Role;
 import com.example.socialweb.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +24,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.security.Principal;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableAspectJAutoProxy
 public class WebSecurityConfig {
     private final UserService userService;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

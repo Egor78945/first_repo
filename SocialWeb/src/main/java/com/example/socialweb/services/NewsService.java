@@ -2,12 +2,9 @@ package com.example.socialweb.services;
 
 import com.example.socialweb.models.entities.News;
 import com.example.socialweb.models.entities.User;
-import com.example.socialweb.models.enums.NewsTheme;
-import com.example.socialweb.models.enums.Role;
 import com.example.socialweb.models.requestModels.PostNewsModel;
 import com.example.socialweb.repositories.CommentRepository;
 import com.example.socialweb.repositories.NewsRepository;
-import com.example.socialweb.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,13 +39,13 @@ public class NewsService {
     }
 
     @Transactional
-    public void postNews(PostNewsModel model, User currentUser) {
+    public void postNews(PostNewsModel model, User publisher) {
         if (isValidNews(model)) {
             log.info("news: creating the news...");
             News news = new News();
             news.setNewsTheme(model.getNewsTheme());
             news.setDescription(model.getDescription());
-            news.setPublisher(currentUser);
+            news.setPublisher(publisher);
             log.info("news: news has been creating, saving...");
             saveNews(news);
         } else {

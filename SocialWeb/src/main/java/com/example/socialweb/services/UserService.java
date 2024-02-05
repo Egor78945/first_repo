@@ -55,6 +55,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserByEmail(email);
     }
 
+    @Transactional
     public void register(RegisterBody registerBody, PasswordEncoder passwordEncoder) {
         User user = new User();
         user.setName(registerBody.getName());
@@ -63,7 +64,7 @@ public class UserService implements UserDetailsService {
         user.setEmail(registerBody.getEmail());
         user.setStatus(registerBody.getStatus());
         user.setCity(registerBody.getCity());
-        user.setRole(Role.ADMIN_ROLE);
+        user.setRole(Role.USER_ROLE);
         user.setCountry(registerBody.getCountry());
         user.setPassword(passwordEncoder.encode(registerBody.getPassword()));
         userRepository.save(user);
@@ -259,6 +260,7 @@ public class UserService implements UserDetailsService {
         return result;
     }
 
+    @Transactional
     public boolean changePassword(PasswordSettingsModel model, User user, PasswordEncoder passwordEncoder) {
         log.info("settings: attempt to change password...");
         if (passwordEncoder.matches(model.getOldPassword(), user.getPassword())) {
@@ -281,6 +283,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Transactional
     public boolean updateProfile(ProfileSettingsModel model, User user) {
         log.info("settings: attempt to update user profile...");
         if (userDataIsValid(model)) {
@@ -334,6 +337,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Transactional
     public void addFriend(User user, User friend) {
         log.info("service: attempt to add user with id " + friend.getId() + " to user with id " + user.getId() + " friend list...");
         if(!user.getId().equals(friend.getId())) {
@@ -352,6 +356,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Transactional
     public void removeFriend(User user, User friend) {
         log.info("service: attempt to remove user with id " + friend.getId() + " from user with id " + user.getId() + " friend list...");
         System.out.println(user.getFriends().get(0).equals(friend));

@@ -2,6 +2,8 @@ package com.example.socialweb.models.entities;
 
 import com.example.socialweb.models.enums.CommunityMode;
 import com.example.socialweb.models.enums.CommunityTheme;
+import com.example.socialweb.models.requestModels.PostNewsModel;
+import com.example.socialweb.services.NewsService;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +15,6 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@EqualsAndHashCode
 public class Community {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

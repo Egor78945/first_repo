@@ -7,7 +7,9 @@ import com.example.socialweb.models.requestModels.*;
 import com.example.socialweb.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,6 @@ public class MainController {
     private final PasswordEncoder passwordEncoder;
     private final MessageService messageService;
     private final NewsService newsService;
-    private final CommentService commentService;
     private final ReportService reportService;
     private final CommunityService communityService;
     private User user;
@@ -186,104 +187,6 @@ public class MainController {
             return "redirect:/main/profile";
     }
 
-    @GetMapping("/news")
-    public String newsMenu() {
-        if (!user.getIsBan())
-            return "news_menu_page";
-        else
-            return "redirect:/main/profile";
-    }
-
-    @GetMapping("/news/all")
-    public String news(Model model, Principal principal) {
-        if (!user.getIsBan()) {
-            model.addAttribute("news", newsService.getAllNews());
-            model.addAttribute("user", userService.getCurrentUser(principal));
-            return "news_page";
-        } else
-            return "redirect:/main/profile";
-    }
-
-    @GetMapping("/news/post")
-    public String postNews(Model model) {
-        if (!user.getIsBan()) {
-            model.addAttribute("model", new PostNewsModel());
-            return "post_news_page";
-        } else
-            return "redirect:/main/profile";
-    }
-
-    @PostMapping("/news/post")
-    public String postNews(@ModelAttribute("model") PostNewsModel model, Principal principal) {
-        if (!user.getIsBan()) {
-            newsService.postNews(model, userService.getCurrentUser(principal));
-            return "redirect:/main/news/all";
-        } else
-            return "redirect:/main/profile";
-    }
-
-    @PostMapping("/news/like/{id}")
-    public String like(@PathVariable("id") Long id, Principal principal) {
-        if (!user.getIsBan()) {
-            newsService.like(newsService.getNewsById(id), userService.getCurrentUser(principal));
-            return "redirect:/main/news/all";
-        } else
-            return "redirect:/main/profile";
-    }
-
-    @PostMapping("/news/unlike/{id}")
-    public String unlike(@PathVariable("id") Long id, Principal principal) {
-        if (!user.getIsBan()) {
-            newsService.unlike(newsService.getNewsById(id), userService.getCurrentUser(principal));
-            return "redirect:/main/news/all";
-        } else
-            return "redirect:/main/profile";
-    }
-
-    @GetMapping("/news/comment/{id}")
-    public String comment(@PathVariable("id") Long id, Model model) {
-        if (!user.getIsBan()) {
-            model.addAttribute("comment", new CommentNewsModel(id));
-            return "comment_news_page";
-        } else
-            return "redirect:/main/profile";
-    }
-
-    @PostMapping("/news/comment/{id}")
-    public String comment(@PathVariable("id") Long id, @ModelAttribute("comment") CommentNewsModel model, Principal principal) {
-        if (!user.getIsBan()) {
-            commentService.comment(model, newsService.getNewsById(id), userService.getCurrentUser(principal));
-            return "redirect:/main/news/all";
-        } else
-            return "redirect:/main/profile";
-    }
-
-    @GetMapping("/news/comments/{id}")
-    public String comments(@PathVariable("id") Long id, Model model) {
-        if (!user.getIsBan()) {
-            model.addAttribute("comments", newsService.getNewsById(id).getComments());
-            model.addAttribute("user", user);
-            return "news_comments_page";
-        } else
-            return "redirect:/main/profile";
-    }
-
-    @PostMapping("/news/comment/delete/{id}")
-    public String deleteComment(@PathVariable("id") Long id) {
-        if (!user.getIsBan()) {
-            commentService.deleteComment(commentService.getCommentById(id), user);
-            return "redirect:/main/news/all";
-        } else
-            return "redirect:/main/profile";
-    }
-
-    @PostMapping("/news/delete/{id}")
-    public String deleteNews(@PathVariable("id") Long id) {
-        if (!user.getIsBan())
-            newsService.deleteNews(newsService.getNewsById(id), user);
-        return "redirect:/main/profile";
-    }
-
     @GetMapping("/user/report/{id}")
     public String reportUser(@PathVariable("id") Long id, Model model) {
         if (!user.getIsBan()) {
@@ -376,12 +279,21 @@ public class MainController {
             return "redirect:/main/community/menu";
     }
 
-    @GetMapping("/main/community/all")
+    @GetMapping("/community")
     public String community(Model model) {
         if (!user.getIsBan()) {
             model.addAttribute("communities", communityService.getAllCommunities());
             return "all_communities_page";
         }
         return "redirect:/main/profile";
+    }
+
+    @GetMapping("/community/news/post/{id}")
+    public String communityNews(@PathVariable("id") Long id, Model model) {
+        if (!user.getIsBan()) {
+            model.addAttribute("model", new PostNewsModel(id));
+            return "post_news_page";
+        } else
+            return "redirect:/main/profile";
     }
 }
